@@ -89,6 +89,84 @@ checkpoint_path = CHECKPOINTS / checkpoint_name
 if checkpoint_path.exists():
     checkpoint_path.unlink()
 
+# Transformer Validation Lab regression.
+llm_config = {
+    'd_model': 32,
+    'n_heads': 4,
+    'n_layers': 1,
+    'context_length': 16,
+    'mlp_ratio': 2.0,
+    'dropout': 0.0,
+    'optimizer': 'adamw',
+    'lr': 0.001,
+    'weight_decay': 0.0,
+    'grad_clip': 1.0,
+    'seed': 42,
+    'device': 'cpu',
+    'amp': False,
+    'tie_embeddings': True,
+}
+llm_create = client.post('/api/advanced/llm/create', json=llm_config)
+assert llm_create.status_code == 200, llm_create.text
+
+corpus = (
+    "Il modello impara dai dati e deve prevedere il token successivo. "
+    "La validation misura la generalizzazione su dati non usati per aggiornare i pesi. "
+) * 6
+llm_train = client.post('/api/advanced/llm/train', json={
+    'text': corpus,
+    'batch_size': 4,
+    'steps': 3,
+    'validation_fraction': 0.20,
+})
+assert llm_train.status_code == 200, llm_train.text
+llm_payload = llm_train.json()
+assert llm_payload['step'] == 3
+assert len(llm_payload['train_loss_curve']) == 3
+assert len(llm_payload['val_loss_curve']) == 3
+assert llm_payload['last']['train_loss'] is not None
+assert llm_payload['last']['val_loss'] is not None
+assert llm_payload['last']['train_perplexity'] is not None
+assert llm_payload['last']['val_perplexity'] is not None
+assert llm_payload['last']['generalization_gap'] is not None
+assert llm_payload['last']['generalization_status'] in ('warming_up', 'learning', 'overfitting', 'underfitting', 'stable')
+assert abs(llm_payload['validation']['fraction'] - 0.20) < 1e-9
+assert_json_finite(llm_payload)
+
+gen_body = {
+    'prompt': 'Il modello ',
+    'max_new_tokens': 24,
+    'temperature': 0.8,
+    'top_k': 20,
+    'seed': 1234,
+}
+gen_a = client.post('/api/advanced/llm/generate', json=gen_body)
+gen_b = client.post('/api/advanced/llm/generate', json=gen_body)
+assert gen_a.status_code == 200, gen_a.text
+assert gen_b.status_code == 200, gen_b.text
+assert gen_a.json()['token_ids'] == gen_b.json()['token_ids']
+assert gen_a.json()['text'] == gen_b.json()['text']
+assert gen_a.json()['seed'] == 1234
+
+# LLM checkpoint must preserve validation history and visible metrics.
+llm_saved_loss = llm_payload['last']['val_loss']
+llm_save = client.post('/api/advanced/checkpoint/save', json={'name': 'regression_v420_llm'})
+assert llm_save.status_code == 200, llm_save.text
+llm_checkpoint_name = llm_save.json()['filename']
+llm_advance = client.post('/api/advanced/llm/train', json={
+    'text': corpus, 'batch_size': 4, 'steps': 1, 'validation_fraction': 0.20,
+})
+assert llm_advance.status_code == 200, llm_advance.text
+assert llm_advance.json()['step'] == 4
+llm_loaded = client.post('/api/advanced/checkpoint/load', json={'filename': llm_checkpoint_name})
+assert llm_loaded.status_code == 200, llm_loaded.text
+assert llm_loaded.json()['step'] == 3
+assert llm_loaded.json()['last']['val_loss'] == llm_saved_loss
+assert llm_loaded.json()['validation']['history_points'] == 3
+llm_checkpoint_path = CHECKPOINTS / llm_checkpoint_name
+if llm_checkpoint_path.exists():
+    llm_checkpoint_path.unlink()
+
 # CUDA/AMP regression: reproduce the exact sequence that previously left
 # GradScaler in UNSCALED state (1 step request followed by a 50-step request).
 if health.json().get('cuda_available'):
@@ -121,8 +199,11 @@ if bad.status_code == 400:
     assert 'error' in err
     assert err['error']['correlation_id']
 
-print('AI Model Lab V4.1 regression tests: OK')
+print('AI Model Lab V4.2 regression tests: OK')
 print('PyTorch:', health.json()['pytorch'])
 print('MLP params:', create.json()['params']['total'])
 print('Step 1 loss:', one.json()['last']['loss'])
 print('Step 51 loss:', payload50['last']['loss'])
+
+print('Transformer validation loss:', llm_payload['last']['val_loss'])
+print('Deterministic generation seed:', gen_a.json()['seed'])
