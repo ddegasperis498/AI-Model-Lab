@@ -29,3 +29,13 @@ Ultimate V4.1 è l'unico backend necessario per Framework Pro e V4 Ultimate. Lo 
 - Risolto l'errore: `unscale_() has already been called on this optimizer since the last update()`.
 - Aggiunto regression test CUDA/AMP con la sequenza reale `1 step` seguita da `50 step`.
 - Aggiornata la versione backend/frontend a V4.1.2.
+
+
+## V4.1.3 — Framework Pro state/UI consistency
+
+- La barra metriche superiore ora usa lo stato reale PyTorch in Framework Pro: Step, Loss, Parametri, Architettura, Learning Rate e Device.
+- La modalità didattica non può più sovrascrivere le metriche del Framework Pro.
+- Torch X-Ray mostra correttamente che l'Attention non è applicabile agli MLP.
+- Lo stato Realtime/Pausa viene sincronizzato con il Framework Pro.
+- I checkpoint salvano e ripristinano anche lo stato AMP GradScaler e le ultime metriche, oltre a modello, optimizer, configurazione e step.
+- Versione frontend/backend allineata a V4.1.3.
