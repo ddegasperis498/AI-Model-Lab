@@ -33,8 +33,8 @@ class SafeJSONResponse(JSONResponse):
 
 
 app = FastAPI(
-    title='AI Model Lab V4.1.3 — Ultimate Dual Engine Backend',
-    version='4.1.3',
+    title='AI Model Lab V4.2.0 — Ultimate Dual Engine Backend',
+    version='4.2.0',
     default_response_class=SafeJSONResponse,
 )
 
@@ -116,7 +116,7 @@ def health():
     device_name = torch.cuda.get_device_name(0) if cuda else 'CPU'
     return {
         'ok': True,
-        'app_version': '4.1.3',
+        'app_version': '4.2.0',
         'project_root': str(ROOT),
         'pytorch': torch.__version__,
         'cuda_available': cuda,
@@ -187,7 +187,7 @@ def train_llm(req: LLMTrainRequest):
         raise HTTPException(409, 'Crea prima il Transformer LM')
     with lock:
         try:
-            return llm.train(req.text, req.batch_size, req.steps)
+            return llm.train(req.text, req.batch_size, req.steps, req.validation_fraction)
         except Exception as exc:
             raise HTTPException(400, str(exc))
 
@@ -198,7 +198,7 @@ def generate_llm(req: LLMGenerateRequest):
         raise HTTPException(409, 'Crea prima il Transformer LM')
     with lock:
         try:
-            return llm.generate(req.prompt, req.max_new_tokens, req.temperature, req.top_k)
+            return llm.generate(req.prompt, req.max_new_tokens, req.temperature, req.top_k, req.seed)
         except Exception as exc:
             raise HTTPException(400, str(exc))
 
@@ -226,6 +226,9 @@ def save_checkpoint(req: CheckpointRequest):
         'model_state': trainer.model.state_dict(),
         'optimizer_state': trainer.optimizer.state_dict(),
         'scaler_state': trainer.scaler.state_dict(),
+        'train_history': getattr(trainer, 'train_history', []),
+        'val_history': getattr(trainer, 'val_history', []),
+        'validation_fraction': getattr(trainer, 'validation_fraction', None),
     }
     torch.save(payload, path)
     return {'ok': True, 'filename': filename, 'size_bytes': path.stat().st_size}
@@ -263,6 +266,10 @@ def load_checkpoint(req: CheckpointLoadRequest):
             trainer.scaler.load_state_dict(payload['scaler_state'])
         trainer.step = int(payload.get('step', 0))
         trainer.last = payload.get('last', {})
+        if hasattr(trainer, 'train_history'):
+            trainer.train_history = payload.get('train_history', [])
+            trainer.val_history = payload.get('val_history', [])
+            trainer.validation_fraction = payload.get('validation_fraction') or trainer.validation_fraction
         current_kind = kind
         return trainer.state()
 
