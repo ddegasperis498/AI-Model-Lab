@@ -272,6 +272,9 @@ class LLMTrainer:
         self.scaler = torch.amp.GradScaler('cuda', enabled=(config.amp and self.device.type == 'cuda'))
         self.step = 0
         self.last = {}
+        self.train_history = []
+        self.val_history = []
+        self.validation_fraction = 0.20
 
     def _batch(self, tokens: torch.Tensor, batch_size: int):
         T = self.config.context_length
@@ -283,44 +286,120 @@ class LLMTrainer:
         y = torch.stack([tokens[s+1:s+T+1] for s in starts])
         return x.to(self.device), y.to(self.device)
 
-    def train(self, text: str, batch_size: int, steps: int):
+    def _split_tokens(self, ids, validation_fraction: float):
+        T = self.config.context_length
+        n = len(ids)
+        min_part = T + 2
+        if n < min_part * 2:
+            raise ValueError(f'Corpus troppo corto per train/validation: servono almeno {min_part*2} byte/token')
+        val_n = max(min_part, int(round(n * validation_fraction)))
+        val_n = min(val_n, n - min_part)
+        split = n - val_n
+        return torch.tensor(ids[:split], dtype=torch.long), torch.tensor(ids[split:], dtype=torch.long)
+
+    @torch.no_grad()
+    def _evaluate_tokens(self, tokens: torch.Tensor, batch_size: int):
+        T = self.config.context_length
+        max_start = len(tokens) - T - 1
+        if max_start < 0:
+            raise ValueError('Validation split troppo corto per il context length')
+        count = min(max(1, batch_size), max_start + 1, 32)
+        if count == 1:
+            starts = torch.tensor([0], dtype=torch.long)
+        else:
+            starts = torch.linspace(0, max_start, steps=count).round().long()
+        x = torch.stack([tokens[int(s):int(s)+T] for s in starts]).to(self.device)
+        y = torch.stack([tokens[int(s)+1:int(s)+T+1] for s in starts]).to(self.device)
+        was_training = self.model.training
+        self.model.eval()
+        with torch.autocast(device_type=self.device.type, dtype=torch.float16,
+                            enabled=(self.config.amp and self.device.type == 'cuda')):
+            _, loss = self.model(x, y)
+        if was_training:
+            self.model.train()
+        return float(loss.detach().float().cpu())
+
+    def _diagnose_generalization(self):
+        if len(self.train_history) < 6 or len(self.val_history) < 6:
+            return 'warming_up'
+        train_now, train_old = self.train_history[-1], self.train_history[-6]
+        val_now, val_old = self.val_history[-1], self.val_history[-6]
+        train_improved = train_now < train_old * 0.99
+        val_improved = val_now < val_old * 0.99
+        if train_improved and val_now > val_old * 1.02:
+            return 'overfitting'
+        if val_improved:
+            return 'learning'
+        if self.step >= 20 and not train_improved and not val_improved:
+            return 'underfitting'
+        return 'stable'
+
+    def train(self, text: str, batch_size: int, steps: int, validation_fraction: float = 0.20):
         ids = self.tokenizer.encode(text)
-        tokens = torch.tensor(ids, dtype=torch.long)
-        losses = []
+        train_tokens, val_tokens = self._split_tokens(ids, validation_fraction)
+        self.validation_fraction = float(validation_fraction)
+        train_curve, val_curve = [], []
         tokens_processed = 0
         t0 = time.perf_counter()
         for _ in range(steps):
-            x, y = self._batch(tokens, batch_size)
+            x, y = self._batch(train_tokens, batch_size)
             self.optimizer.zero_grad(set_to_none=True)
-            with torch.autocast(device_type=self.device.type, dtype=torch.float16,
-                                enabled=(self.config.amp and self.device.type == 'cuda')):
+            amp_enabled = bool(self.config.amp and self.device.type == 'cuda')
+            with torch.autocast(device_type=self.device.type, dtype=torch.float16, enabled=amp_enabled):
                 _, loss = self.model(x, y)
             self.scaler.scale(loss).backward()
             self.scaler.unscale_(self.optimizer)
             grad_before_clip = gradient_stats(self.model)
-            clip_value = float(torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.grad_clip).detach().cpu())
+            clip_value = float(torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.config.grad_clip).detach().float().cpu())
             self.scaler.step(self.optimizer)
             self.scaler.update()
             self.step += 1
-            losses.append(float(loss.detach().cpu()))
+            train_loss = float(loss.detach().float().cpu())
+            val_loss = self._evaluate_tokens(val_tokens, batch_size)
+            train_curve.append(train_loss)
+            val_curve.append(val_loss)
+            self.train_history.append(train_loss)
+            self.val_history.append(val_loss)
+            self.train_history = self.train_history[-500:]
+            self.val_history = self.val_history[-500:]
             tokens_processed += x.numel()
+
         elapsed = max(time.perf_counter() - t0, 1e-9)
+        train_loss = train_curve[-1]
+        val_loss = val_curve[-1]
+        gap = val_loss - train_loss
         self.last = {
-            'loss': losses[-1], 'perplexity': math_exp_safe(losses[-1]),
+            'loss': train_loss,
+            'train_loss': train_loss,
+            'val_loss': val_loss,
+            'perplexity': math_exp_safe(train_loss),
+            'train_perplexity': math_exp_safe(train_loss),
+            'val_perplexity': math_exp_safe(val_loss),
+            'generalization_gap': gap,
+            'generalization_status': self._diagnose_generalization(),
+            'validation_fraction': self.validation_fraction,
+            'train_fraction': 1.0 - self.validation_fraction,
             'tokens_per_second': tokens_processed / elapsed,
-            'elapsed_s': elapsed, 'grad_before_clip': grad_before_clip,
+            'elapsed_s': elapsed,
+            'grad_before_clip': grad_before_clip,
             'clip_norm_return': clip_value,
         }
-        return self.state(extra={'loss_curve': losses})
+        return self.state(extra={
+            'loss_curve': train_curve,
+            'train_loss_curve': train_curve,
+            'val_loss_curve': val_curve,
+        })
 
     @torch.no_grad()
-    def generate(self, prompt: str, max_new_tokens: int, temperature: float, top_k: int):
+    def generate(self, prompt: str, max_new_tokens: int, temperature: float, top_k: int, seed: int = 42):
         self.model.eval()
         ids = self.tokenizer.encode(prompt)
         if not ids:
             ids = [32]
         idx = torch.tensor([ids], dtype=torch.long, device=self.device)
         generated = list(ids)
+        generator = torch.Generator(device=self.device)
+        generator.manual_seed(int(seed))
         for _ in range(max_new_tokens):
             x = idx[:, -self.config.context_length:]
             logits, _ = self.model(x)
@@ -331,11 +410,11 @@ class LLMTrainer:
                 cutoff = values[:, -1].unsqueeze(-1)
                 logits = torch.where(logits < cutoff, torch.full_like(logits, float('-inf')), logits)
             probs = F.softmax(logits, dim=-1)
-            nxt = torch.multinomial(probs, num_samples=1)
+            nxt = torch.multinomial(probs, num_samples=1, generator=generator)
             idx = torch.cat([idx, nxt], dim=1)
             generated.append(int(nxt.item()))
         self.model.train()
-        return {'text': self.tokenizer.decode(generated), 'token_ids': generated}
+        return {'text': self.tokenizer.decode(generated), 'token_ids': generated, 'seed': int(seed)}
 
     def state(self, extra=None):
         attention = self.model.attention_snapshot(max_tokens=48)
@@ -349,12 +428,16 @@ class LLMTrainer:
             'parameter_snapshot': param_snapshot(self.model),
             'last_attention': attention,
             'last': self.last,
+            'validation': {
+                'fraction': self.validation_fraction,
+                'train_fraction': 1.0 - self.validation_fraction,
+                'history_points': min(len(self.train_history), len(self.val_history)),
+            },
             'tokenizer': {'type': 'byte-level UTF-8', 'vocab_size': 256},
         }
         if extra:
             payload.update(extra)
         return sanitize_for_json(payload)
-
 
 def math_exp_safe(x: float) -> float:
     import math
