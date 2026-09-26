@@ -117,7 +117,7 @@ window.AIML = window.AIML || {};
       $('advThreads').textContent = h.cpu_threads;
       $('engineModeBadge').textContent = S.mode === 'advanced' ? `PyTorch ${h.pytorch}` : 'MLP didattico';
       const hint=$('advancedBackendHint');
-      if(hint){hint.className='mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-100/80';hint.innerHTML=`✓ Backend Ultimate V4.1.3 online. PyTorch <b>${h.pytorch}</b> · ${h.cuda_available?`CUDA ${h.cuda_version||''} · ${h.device_name}`:'CPU'}. Pronto per Framework Pro.`;}
+      if(hint){hint.className='mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-100/80';hint.innerHTML=`✓ Backend Ultimate V4.2.0 online. PyTorch <b>${h.pytorch}</b> · ${h.cuda_available?`CUDA ${h.cuda_version||''} · ${h.device_name}`:'CPU'}. Pronto per Framework Pro.`;}
       if (S.mode === 'advanced' && !S.currentState) resetAdvancedTopMetrics();
       return true;
     } catch (err) {
@@ -178,7 +178,11 @@ window.AIML = window.AIML || {};
     }
     if ($('torchLlmChart')) {
       S.llmChart = new Chart($('torchLlmChart').getContext('2d'), {
-        type:'line', data:{labels:[], datasets:[{label:'Transformer Cross Entropy',data:[],borderColor:'#c084fc',pointRadius:0,tension:.2}]},
+        type:'line',
+        data:{labels:[],datasets:[
+          {label:'Train Cross Entropy',data:[],borderColor:'#60a5fa',pointRadius:0,tension:.2},
+          {label:'Validation Cross Entropy',data:[],borderColor:'#f59e0b',pointRadius:0,tension:.2}
+        ]},
         options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{x:{ticks:{color:'#64748b'},grid:{color:'rgba(148,163,184,.05)'}},y:{beginAtZero:true,ticks:{color:'#64748b'},grid:{color:'rgba(148,163,184,.05)'}}},plugins:{legend:{labels:{color:'#cbd5e1'}}}}
       });
     }
@@ -273,7 +277,7 @@ window.AIML = window.AIML || {};
     try {
       const ok = await health({interactive:false}); if(!ok) throw new Error('Backend PyTorch offline. Avvia START_ULTIMATE_V4.bat');
       const st=await api('/api/advanced/llm/create',{method:'POST',body:JSON.stringify(llmConfig())},{title:'Creazione Transformer LM',message:'Allocazione embedding, attention block e optimizer…',operation:'Crea Transformer LM',button:$('torchCreateLlm'),busyLabel:'Creazione…',retry:createLLM});
-      S.llmState=S.currentState=st;S.llmChart.data.labels=[];S.llmChart.data.datasets[0].data=[];S.llmChart.update('none');
+      S.llmState=S.currentState=st;S.llmChart.data.labels=[];S.llmChart.data.datasets.forEach(ds=>ds.data=[]);S.llmChart.update('none');
       renderLLMState(st);renderXRay(st);logAdvanced(`✓ Transformer LM creato · ${st.params.total.toLocaleString('it-IT')} parametri · ${st.config.n_layers} block · ${st.config.n_heads} head.`,'ok');return st;
     } catch(err){logAdvanced(`✕ Creazione Transformer: ${err.message}`,'error');localError(err,'Creazione Transformer LM',createLLM);return null;}
   }
@@ -282,12 +286,15 @@ window.AIML = window.AIML || {};
     try {
       if(!S.llmState){const created=await createLLM();if(!created)return null;}
       const text=$('llmTrainingText').value; const btn=realtime?null:(steps===1?$('llmTrainStepBtn'):$('llm20'));
-      const st=await api('/api/advanced/llm/train',{method:'POST',body:JSON.stringify({text,batch_size:parseInt($('llmBatch').value),steps})},{silent:realtime,title:`Transformer training · ${steps} step`,message:'Cross entropy → autograd → optimizer step',operation:'Training Transformer LM',button:btn,busyLabel:'Training…',retry:realtime?null:()=>trainLLM(steps)});
+      const validation_fraction=(parseInt($('llmValPct')?.value||20))/100;
+      const st=await api('/api/advanced/llm/train',{method:'POST',body:JSON.stringify({text,batch_size:parseInt($('llmBatch').value),steps,validation_fraction})},{silent:realtime,title:`Transformer training · ${steps} step`,message:'Train cross entropy → validation hold-out → autograd → optimizer step',operation:'Training Transformer LM',button:btn,busyLabel:'Training…',retry:realtime?null:()=>trainLLM(steps)});
       S.llmState=S.currentState=st;
-      (st.loss_curve||[]).forEach(loss=>{S.llmChart.data.labels.push(S.llmChart.data.labels.length+1);S.llmChart.data.datasets[0].data.push(loss);});
-      if(S.llmChart.data.labels.length>400){S.llmChart.data.labels=S.llmChart.data.labels.slice(-400);S.llmChart.data.datasets[0].data=S.llmChart.data.datasets[0].data.slice(-400);}
+      const trainCurve=st.train_loss_curve||st.loss_curve||[];
+      const valCurve=st.val_loss_curve||[];
+      trainCurve.forEach((loss,i)=>{S.llmChart.data.labels.push(S.llmChart.data.labels.length+1);S.llmChart.data.datasets[0].data.push(loss);S.llmChart.data.datasets[1].data.push(valCurve[i]??null);});
+      if(S.llmChart.data.labels.length>400){S.llmChart.data.labels=S.llmChart.data.labels.slice(-400);S.llmChart.data.datasets.forEach(ds=>ds.data=ds.data.slice(-400));}
       S.llmChart.update('none');renderLLMState(st);renderXRay(st);renderAttention(st);
-      logAdvanced(`✓ Transformer step=${st.step} · loss=${fmt(st.last.loss,5)} · ppl=${fmt(st.last.perplexity,2)} · tok/s=${fmt(st.last.tokens_per_second,0)}`,'torch');if(realtime)A.UI.setLive(true,`Transformer live · step ${st.step}`);return st;
+      logAdvanced(`✓ Transformer step=${st.step} · train=${fmt(st.last.train_loss,5)} · val=${fmt(st.last.val_loss,5)} · gap=${fmt(st.last.generalization_gap,5)} · ${st.last.generalization_status||'—'}`,'torch');if(realtime)A.UI.setLive(true,`Transformer live · step ${st.step} · val ${fmt(st.last.val_loss,3)}`);return st;
     } catch(err){pauseLLM();logAdvanced(`✕ Transformer training: ${err.message}`,'error');localError(err,'Training Transformer LM',()=>trainLLM(steps));return null;}
   }
 
@@ -297,7 +304,7 @@ window.AIML = window.AIML || {};
 
   async function generateLLM(){
     try{
-      const result=await api('/api/advanced/llm/generate',{method:'POST',body:JSON.stringify({prompt:$('llmPrompt').value,max_new_tokens:parseInt($('llmGenTokens').value),temperature:parseFloat($('llmTemperature').value),top_k:parseInt($('llmTopK').value)})},{title:'Generazione Transformer',message:'Generazione autoregressiva token-by-token…',operation:'Generazione Transformer',button:$('llmGenerate'),busyLabel:'Generazione…',retry:generateLLM});
+      const result=await api('/api/advanced/llm/generate',{method:'POST',body:JSON.stringify({prompt:$('llmPrompt').value,max_new_tokens:parseInt($('llmGenTokens').value),temperature:parseFloat($('llmTemperature').value),top_k:parseInt($('llmTopK').value),seed:parseInt($('llmGenSeed')?.value||42)})},{title:'Generazione Transformer',message:'Generazione autoregressiva deterministica rispetto al seed…',operation:'Generazione Transformer',button:$('llmGenerate'),busyLabel:'Generazione…',retry:generateLLM});
       $('llmGenerated').textContent=result.text;logAdvanced(`✓ Generazione completata: ${result.token_ids.length} byte-token.`,'ok');
     }catch(err){logAdvanced(`✕ Generazione: ${err.message}`,'error');localError(err,'Generazione Transformer',generateLLM);}
   }
@@ -310,7 +317,24 @@ window.AIML = window.AIML || {};
   }
 
   function renderLLMState(st){
-    $('llmStepMetric').textContent=st.step;$('llmParams').textContent=st.params.total.toLocaleString('it-IT');$('llmLoss').textContent=fmt(st.last?.loss,5);$('llmPpl').textContent=fmt(st.last?.perplexity,2);$('llmTokSec').textContent=fmt(st.last?.tokens_per_second,0);$('llmDeviceMetric').textContent=st.device;
+    const last=st.last||{};
+    $('llmStepMetric').textContent=st.step;
+    $('llmParams').textContent=st.params.total.toLocaleString('it-IT');
+    $('llmLoss').textContent=fmt(last.train_loss ?? last.loss,5);
+    if($('llmValLoss')) $('llmValLoss').textContent=fmt(last.val_loss,5);
+    $('llmPpl').textContent=fmt(last.train_perplexity ?? last.perplexity,2);
+    if($('llmValPpl')) $('llmValPpl').textContent=fmt(last.val_perplexity,2);
+    if($('llmGap')) $('llmGap').textContent=fmt(last.generalization_gap,5);
+    if($('llmGeneralizationStatus')){
+      const labels={warming_up:'Warm-up',learning:'Learning',overfitting:'Overfitting',underfitting:'Underfitting',stable:'Stable'};
+      $('llmGeneralizationStatus').textContent=labels[last.generalization_status]||'—';
+      $('llmGeneralizationStatus').className='text-sm mt-2 '+(last.generalization_status==='overfitting'?'text-rose-300':last.generalization_status==='learning'?'text-emerald-300':last.generalization_status==='underfitting'?'text-amber-300':'text-blue-300');
+    }
+    $('llmTokSec').textContent=fmt(last.tokens_per_second,0);$('llmDeviceMetric').textContent=st.device;
+    if(st.validation?.fraction!=null && $('llmValPct')){
+      const pct=Math.round(st.validation.fraction*100);$('llmValPct').value=pct;
+      if($('llmSplitSummary')) $('llmSplitSummary').textContent=`${100-pct}% train · ${pct}% validation`;
+    }
     renderAdvancedTopMetrics(st, S.llmRunning ? 'Realtime' : 'Pronto');
   }
 
@@ -346,6 +370,8 @@ window.AIML = window.AIML || {};
     $('advRefreshHealth')?.addEventListener('click',()=>health({interactive:true}));
     $('torchCreateMlp')?.addEventListener('click',createMLP);$('torchMlpStep')?.addEventListener('click',()=>trainMLP(1));$('torchMlp50')?.addEventListener('click',()=>trainMLP(50));$('torchMlpStart')?.addEventListener('click',startMLP);$('torchMlpPause')?.addEventListener('click',pauseMLP);
     $('torchCreateLlm')?.addEventListener('click',createLLM);$('llmTrainStepBtn')?.addEventListener('click',()=>trainLLM(1));$('llm20')?.addEventListener('click',()=>trainLLM(20));$('llmStart')?.addEventListener('click',startLLM);$('llmPause')?.addEventListener('click',pauseLLM);$('llmGenerate')?.addEventListener('click',generateLLM);
+    $('llmValPct')?.addEventListener('input',e=>{const p=parseInt(e.target.value);if($('llmSplitSummary'))$('llmSplitSummary').textContent=`${100-p}% train · ${p}% validation`;});
+    $('llmResetGenSeed')?.addEventListener('click',()=>{if($('llmGenSeed'))$('llmGenSeed').value=42;});
     $('saveCheckpoint')?.addEventListener('click',saveCheckpoint);$('refreshCheckpoints')?.addEventListener('click',listCheckpoints);
     $('torchRefreshXray')?.addEventListener('click',async()=>{try{const path=S.currentState?.kind==='transformer_lm'?'/api/advanced/llm/state':'/api/advanced/mlp/state';const st=await api(path,{}, {title:'Aggiornamento Torch X-Ray',message:'Lettura moduli, parametri e gradienti…',operation:'Aggiorna Torch X-Ray',button:$('torchRefreshXray'),busyLabel:'Aggiorna…'});S.currentState=st;renderXRay(st);if(st.kind==='transformer_lm')renderAttention(st);}catch(e){logAdvanced(e.message,'error');}});
     $('torchMlpDataset')?.addEventListener('change',e=>{const two=['xor','circles'].includes(e.target.value);$('torchMlpInput').value=two?2:1;$('torchMlpTask').value=two?'classification':'regression';});
