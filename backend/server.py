@@ -33,8 +33,8 @@ class SafeJSONResponse(JSONResponse):
 
 
 app = FastAPI(
-    title='AI Model Lab V4.1 — Ultimate Dual Engine Backend',
-    version='4.1',
+    title='AI Model Lab V4.1.2 — Ultimate Dual Engine Backend',
+    version='4.1.2',
     default_response_class=SafeJSONResponse,
 )
 
@@ -116,7 +116,7 @@ def health():
     device_name = torch.cuda.get_device_name(0) if cuda else 'CPU'
     return {
         'ok': True,
-        'app_version': '4.1.1',
+        'app_version': '4.1.2',
         'project_root': str(ROOT),
         'pytorch': torch.__version__,
         'cuda_available': cuda,
