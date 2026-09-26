@@ -117,7 +117,7 @@ window.AIML = window.AIML || {};
       $('advThreads').textContent = h.cpu_threads;
       $('engineModeBadge').textContent = S.mode === 'advanced' ? `PyTorch ${h.pytorch}` : 'MLP didattico';
       const hint=$('advancedBackendHint');
-      if(hint){hint.className='mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-100/80';hint.innerHTML=`✓ Backend Ultimate V4.1.2 online. PyTorch <b>${h.pytorch}</b> · ${h.cuda_available?`CUDA ${h.cuda_version||''} · ${h.device_name}`:'CPU'}. Pronto per Framework Pro.`;}
+      if(hint){hint.className='mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-100/80';hint.innerHTML=`✓ Backend Ultimate V4.1.3 online. PyTorch <b>${h.pytorch}</b> · ${h.cuda_available?`CUDA ${h.cuda_version||''} · ${h.device_name}`:'CPU'}. Pronto per Framework Pro.`;}
       if (S.mode === 'advanced' && !S.currentState) resetAdvancedTopMetrics();
       return true;
     } catch (err) {
