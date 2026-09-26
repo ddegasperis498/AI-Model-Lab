@@ -96,6 +96,9 @@ window.AIML = window.AIML || {};
   }
 
   function refreshMetrics(){
+    // In Framework Pro the top bar is owned by industrial.js and must reflect
+    // the real backend model, never the stale didactic MLP state.
+    if (document.body.dataset.labMode === 'advanced') return;
     $("epochMetric").textContent=state.epoch;
     $("lossMetric").textContent=state.last?A.fmt(state.last.loss,7):"—";
     $("paramMetric").textContent=state.net?state.net.paramCount():"—";
