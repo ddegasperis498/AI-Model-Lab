@@ -68,6 +68,30 @@ assert payload50['step'] == 51
 assert_json_finite(payload50)
 assert len(payload50.get('loss_curve', [])) == 50
 
+
+# CUDA/AMP regression: reproduce the exact sequence that previously left
+# GradScaler in UNSCALED state (1 step request followed by a 50-step request).
+if health.json().get('cuda_available'):
+    cuda_config = dict(config)
+    cuda_config['device'] = 'cuda'
+    cuda_config['amp'] = True
+    cuda_create = client.post('/api/advanced/mlp/create', json=cuda_config)
+    assert cuda_create.status_code == 200, cuda_create.text
+
+    cuda_one = client.post('/api/advanced/mlp/train', json={'data': samples, 'batch_size': 32, 'steps': 1})
+    assert cuda_one.status_code == 200, cuda_one.text
+    assert cuda_one.json()['step'] == 1
+    assert cuda_one.json()['device'] == 'cuda'
+    assert_json_finite(cuda_one.json())
+
+    cuda_fifty = client.post('/api/advanced/mlp/train', json={'data': samples, 'batch_size': 32, 'steps': 50})
+    assert cuda_fifty.status_code == 200, cuda_fifty.text
+    assert cuda_fifty.json()['step'] == 51
+    assert_json_finite(cuda_fifty.json())
+    assert len(cuda_fifty.json().get('loss_curve', [])) == 50
+else:
+    print('CUDA/AMP regression: SKIPPED (CUDA non disponibile)')
+
 # Error responses must use the structured error contract.
 bad = client.post('/api/advanced/mlp/train', json={'data': [], 'batch_size': 32, 'steps': 1})
 assert bad.status_code in (400, 422), bad.text
