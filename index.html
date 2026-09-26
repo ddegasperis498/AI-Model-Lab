@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-<link rel="stylesheet" href="styles.css?v=4.1.3">
+<link rel="stylesheet" href="styles.css?v=4.2.0">
 </head>
 <body>
 <div class="min-h-screen p-3 lg:p-5">
@@ -16,11 +16,11 @@
 <aside class="glass rounded-3xl p-4 lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] overflow-y-auto scrollbar">
   <div class="flex items-center gap-3 mb-5">
     <div class="w-11 h-11 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center"><i class="fa-solid fa-brain text-blue-300"></i></div>
-    <div><div class="font-semibold">AI Model Lab</div><div class="text-[11px] text-slate-500">Neural X-Ray Studio · V4.1.3 Professional</div></div>
+    <div><div class="font-semibold">AI Model Lab</div><div class="text-[11px] text-slate-500">Neural X-Ray Studio · V4.2.0 Professional</div></div>
   </div>
   <div class="mode-switch mb-4">
     <button id="modeDidacticBtn" class="mode-active flex-1"><i class="fa-solid fa-graduation-cap mr-1"></i>Didattica</button>
-    <button id="modeAdvancedBtn" class="flex-1"><i class="fa-brands fa-python mr-1"></i>Framework Pro V4.1.3</button>
+    <button id="modeAdvancedBtn" class="flex-1"><i class="fa-brands fa-python mr-1"></i>Framework Pro V4.2.0</button>
   </div>
   <nav class="space-y-1">
     <button class="nav-btn active" data-section="dashboard" data-title="Dashboard"><i class="fa-solid fa-gauge w-6"></i>Dashboard</button>
@@ -273,16 +273,21 @@
       <div class="grid grid-cols-2 gap-2"><div><label>Learning rate</label><input id="llmLr" type="number" value="0.0003" step="0.0001" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Weight decay</label><input id="llmWd" type="number" value="0.01" step="0.001" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
       <div class="grid grid-cols-2 gap-2"><div><label>Gradient clip</label><input id="llmClip" type="number" value="1.0" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Seed</label><input id="llmSeed" type="number" value="42" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
       <label class="flex gap-2 items-center"><input id="llmTie" type="checkbox" checked class="accent-purple-500">Tie token embedding ↔ lm_head</label>
+      <div class="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-3">
+        <div class="flex items-center justify-between gap-3"><label>Validation split</label><span id="llmSplitSummary" class="text-xs text-blue-300">80% train · 20% validation</span></div>
+        <input id="llmValPct" type="range" min="10" max="40" step="5" value="20" class="w-full mt-2 accent-blue-500">
+        <p class="text-xs text-slate-500 mt-2">La validation non aggiorna i pesi: misura quanto il modello generalizza su token tenuti fuori dal training.</p>
+      </div>
       <div><label>Realtime interval (ms)</label><input id="llmSpeed" type="number" value="80" min="20" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div>
       <button id="torchCreateLlm" class="w-full rounded-xl bg-purple-600 px-3 py-2.5">Crea Transformer</button>
       <div class="grid grid-cols-2 gap-2"><button id="llmTrainStepBtn" class="rounded-xl bg-blue-600 px-3 py-2.5">1 step</button><button id="llm20" class="rounded-xl bg-blue-600/70 px-3 py-2.5">20 step</button><button id="llmStart" class="rounded-xl bg-emerald-700 px-3 py-2.5">Realtime</button><button id="llmPause" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2.5">Pausa</button></div>
     </div></div>
     <div class="space-y-4">
       <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-2">Corpus di training</h3><textarea id="llmTrainingText" class="w-full h-[230px] rounded-2xl bg-slate-950/60 border border-slate-800 p-4 text-sm">L'intelligenza artificiale apprende regolarità statistiche dai dati. Un language model autoregressivo osserva una sequenza di token e impara a prevedere il token successivo. Durante il forward pass i token diventano embedding, attraversano self-attention causale e reti feed-forward. La cross entropy misura l'errore e la backpropagation calcola i gradienti. AdamW aggiorna i parametri. Ripetendo il processo il modello modifica le probabilità associate ai token successivi. Questo testo è ripetuto per fornire un piccolo corpus didattico. L'intelligenza artificiale apprende regolarità statistiche dai dati. Un language model autoregressivo osserva una sequenza di token e impara a prevedere il token successivo.</textarea></div>
-      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Cross-Entropy Loss</h3><div class="h-[300px]"><canvas id="torchLlmChart"></canvas></div></div>
-      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Generazione autoregressiva</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-2"><input id="llmPrompt" value="L'intelligenza " class="md:col-span-3 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><div><label class="small-label">New tokens</label><input id="llmGenTokens" type="number" value="80" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Temperature</label><input id="llmTemperature" type="number" value="0.8" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Top-k</label><input id="llmTopK" type="number" value="40" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div><button id="llmGenerate" class="mt-3 rounded-xl bg-purple-600 px-4 py-2.5">Genera</button><pre id="llmGenerated" class="scrollbar whitespace-pre-wrap mt-3 min-h-[110px] max-h-[260px] overflow-auto rounded-2xl bg-black/30 border border-slate-800 p-4 text-sm"></pre></div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-1">Train / Validation Cross-Entropy</h3><p class="text-xs text-slate-500 mb-3">Blu = training · Ambra = validation hold-out. Se train scende mentre validation sale, il modello sta probabilmente overfittando.</p><div class="h-[300px]"><canvas id="torchLlmChart"></canvas></div></div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Generazione autoregressiva</h3><div class="grid grid-cols-1 md:grid-cols-4 gap-2"><input id="llmPrompt" value="L'intelligenza " class="md:col-span-4 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><div><label class="small-label">New tokens</label><input id="llmGenTokens" type="number" value="80" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Temperature</label><input id="llmTemperature" type="number" value="0.8" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Top-k</label><input id="llmTopK" type="number" value="40" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Generation seed</label><input id="llmGenSeed" type="number" value="42" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div><div class="flex gap-2 mt-3"><button id="llmGenerate" class="rounded-xl bg-purple-600 px-4 py-2.5">Genera</button><button id="llmResetGenSeed" class="rounded-xl bg-slate-800 border border-slate-700 px-4 py-2.5">Reset seed = 42</button></div><pre id="llmGenerated" class="scrollbar whitespace-pre-wrap mt-3 min-h-[110px] max-h-[260px] overflow-auto rounded-2xl bg-black/30 border border-slate-800 p-4 text-sm"></pre></div>
     </div>
-    <div class="space-y-4"><div class="grid grid-cols-2 gap-3"><div class="metric rounded-2xl p-4"><div class="small-label">Step</div><div id="llmStepMetric" class="text-xl mt-1">0</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Parametri</div><div id="llmParams" class="text-xl mt-1 text-purple-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Loss</div><div id="llmLoss" class="text-xl mt-1 text-rose-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Perplexity</div><div id="llmPpl" class="text-xl mt-1 text-amber-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Token/s</div><div id="llmTokSec" class="text-xl mt-1 text-emerald-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Device</div><div id="llmDeviceMetric" class="text-sm mt-2">—</div></div></div><div class="industrial-card rounded-3xl p-5"><h3 class="font-semibold">Pipeline reale</h3><div class="text-xs text-slate-400 mt-3 leading-7 font-mono">UTF-8 bytes → Embedding + Positional Embedding<br>→ LayerNorm → Q/K/V → Causal Multi-Head Attention<br>→ Residual → LayerNorm → GELU MLP → Residual<br>→ … N blocks … → LayerNorm → LM Head<br>→ Logits[256] → CrossEntropy → autograd.backward()<br>→ gradient clipping → AdamW.step()</div></div></div>
+    <div class="space-y-4"><div class="grid grid-cols-2 gap-3"><div class="metric rounded-2xl p-4"><div class="small-label">Step</div><div id="llmStepMetric" class="text-xl mt-1">0</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Parametri</div><div id="llmParams" class="text-xl mt-1 text-purple-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Train Loss</div><div id="llmLoss" class="text-xl mt-1 text-rose-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Validation Loss</div><div id="llmValLoss" class="text-xl mt-1 text-amber-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Train PPL</div><div id="llmPpl" class="text-xl mt-1 text-rose-200">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Validation PPL</div><div id="llmValPpl" class="text-xl mt-1 text-amber-200">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Generalization Gap</div><div id="llmGap" class="text-xl mt-1">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Diagnosi</div><div id="llmGeneralizationStatus" class="text-sm mt-2">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Token/s</div><div id="llmTokSec" class="text-xl mt-1 text-emerald-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Device</div><div id="llmDeviceMetric" class="text-sm mt-2">—</div></div></div><div class="industrial-card rounded-3xl p-5"><h3 class="font-semibold">Pipeline reale</h3><div class="text-xs text-slate-400 mt-3 leading-7 font-mono">UTF-8 bytes → Embedding + Positional Embedding<br>→ LayerNorm → Q/K/V → Causal Multi-Head Attention<br>→ Residual → LayerNorm → GELU MLP → Residual<br>→ … N blocks … → LayerNorm → LM Head<br>→ Logits[256] → CrossEntropy → autograd.backward()<br>→ gradient clipping → AdamW.step()</div></div></div>
   </div>
 </section>
 
@@ -391,13 +396,13 @@
 </div>
 </div>
 
-<script src="js/ui-runtime.js?v=4.1.3"></script>
-<script src="js/engine.js?v=4.1.3"></script>
-<script src="js/datasets.js?v=4.1.3"></script>
-<script src="js/visualizer.js?v=4.1.3"></script>
-<script src="js/transformer.js?v=4.1.3"></script>
-<script src="js/app.js?v=4.1.3"></script>
-<script src="js/advanced.js?v=4.1.3"></script>
-<script src="js/industrial.js?v=4.1.3"></script>
-<script src="js/ultimate.js?v=4.1.3"></script>
+<script src="js/ui-runtime.js?v=4.2.0"></script>
+<script src="js/engine.js?v=4.2.0"></script>
+<script src="js/datasets.js?v=4.2.0"></script>
+<script src="js/visualizer.js?v=4.2.0"></script>
+<script src="js/transformer.js?v=4.2.0"></script>
+<script src="js/app.js?v=4.2.0"></script>
+<script src="js/advanced.js?v=4.2.0"></script>
+<script src="js/industrial.js?v=4.2.0"></script>
+<script src="js/ultimate.js?v=4.2.0"></script>
 </body></html>
