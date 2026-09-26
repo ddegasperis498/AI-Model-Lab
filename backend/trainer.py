@@ -176,7 +176,11 @@ class MLPTrainer:
                 self.scaler.scale(loss).backward()
                 self.scaler.unscale_(self.optimizer)
                 if not gradients_are_finite(self.model):
-                    # Retry the same batch in full precision; this is safe because optimizer.step() has not run yet.
+                    # unscale_() moves GradScaler's per-optimizer state to UNSCALED.
+                    # Finalize/reset that state before the FP32 retry, otherwise the
+                    # next training iteration raises:
+                    # "unscale_() has already been called on this optimizer since the last update()".
+                    self.scaler.update()
                     used_amp = False
                     self.optimizer.zero_grad(set_to_none=True)
                     pred = self.model(x)
