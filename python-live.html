@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Model Lab — Python Live</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="p-4 lg:p-6 max-w-[1600px] mx-auto space-y-4">
+<header class="glass rounded-3xl p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+  <div><h1 class="text-2xl font-semibold"><i class="fa-brands fa-python text-yellow-300 mr-2"></i>Python Live</h1>
+  <p class="text-sm text-slate-400">Stato sincronizzato della rete + possibilità di eseguire Python reale nel browser tramite Pyodide.</p></div>
+  <div class="flex gap-2 flex-wrap">
+    <span id="conn" class="pill rounded-xl px-3 py-2 text-sm text-amber-300">In attesa dashboard…</span>
+    <button id="runPyodide" class="rounded-xl px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-200"><i class="fa-solid fa-play mr-2"></i>Esegui Python reale</button>
+  </div>
+</header>
+
+<div class="grid grid-cols-1 xl:grid-cols-[1.45fr_.8fr] gap-4">
+<section class="glass rounded-3xl overflow-hidden">
+  <div class="px-4 py-3 border-b border-slate-800 flex justify-between"><span class="font-mono text-sm text-slate-400">python/ai_model_lab_engine.py</span><span id="phase" class="text-blue-300 text-sm">idle</span></div>
+  <pre id="code" class="scrollbar overflow-auto h-[calc(100vh-220px)] min-h-[600px] p-4 text-xs leading-6 font-mono text-slate-300 whitespace-pre"></pre>
+</section>
+<section class="space-y-4">
+  <div class="glass rounded-3xl p-4"><h2 class="font-semibold mb-3">Stato Live</h2><div id="vars" class="space-y-2 text-xs font-mono"></div></div>
+  <div class="glass rounded-3xl p-4"><h2 class="font-semibold mb-3">Output Pyodide</h2><div id="pyout" class="scrollbar h-[320px] overflow-auto bg-black/30 border border-slate-800 rounded-2xl p-3 text-xs font-mono text-slate-400"></div></div>
+</section>
+</div>
+</div>
+
+<script>
+let latestState=null;
+const enginePath="python/ai_model_lab_engine.py";
+const embeddedPythonSource="\"\"\"\nAI Model Lab - pure Python educational MLP engine.\nNo third-party dependencies are required.\n\nArchitecture:\n    input -> Dense hidden layers -> output\n\nSupported:\n    - tanh / ReLU / sigmoid / linear\n    - regression (MSE)\n    - binary classification (binary cross entropy)\n    - manual backpropagation\n    - SGD\n\"\"\"\n\nfrom __future__ import annotations\nimport math\nimport random\nfrom dataclasses import dataclass, field\nfrom typing import List, Callable\n\ndef clamp(x: float, lo: float, hi: float) -> float:\n    return max(lo, min(hi, x))\n\ndef sigmoid(x: float) -> float:\n    x = clamp(x, -40.0, 40.0)\n    return 1.0 / (1.0 + math.exp(-x))\n\nACT = {\n    \"linear\": (lambda x: x, lambda z, a: 1.0),\n    \"tanh\": (math.tanh, lambda z, a: 1.0 - a*a),\n    \"relu\": (lambda x: max(0.0, x), lambda z, a: 1.0 if z > 0 else 0.0),\n    \"sigmoid\": (sigmoid, lambda z, a: a * (1.0 - a)),\n}\n\n@dataclass\nclass Dense:\n    in_size: int\n    out_size: int\n    activation: str = \"tanh\"\n    W: List[List[float]] = field(init=False)\n    b: List[float] = field(init=False)\n    cache: dict = field(default_factory=dict, init=False)\n    grads: dict = field(default_factory=dict, init=False)\n\n    def __post_init__(self):\n        scale = math.sqrt(2.0 / max(1, self.in_size))\n        self.W = [\n            [random.uniform(-scale, scale) for _ in range(self.in_size)]\n            for _ in range(self.out_size)\n        ]\n        self.b = [random.uniform(-0.08, 0.08) for _ in range(self.out_size)]\n\n    def forward(self, x: List[float]) -> List[float]:\n        f, _ = ACT[self.activation]\n        z = [\n            sum(w * xi for w, xi in zip(row, x)) + self.b[j]\n            for j, row in enumerate(self.W)\n        ]\n        a = [f(v) for v in z]\n        self.cache = {\"x\": x[:], \"z\": z, \"a\": a}\n        return a\n\n    def backward(self, grad_out: List[float]) -> List[float]:\n        x, z, a = self.cache[\"x\"], self.cache[\"z\"], self.cache[\"a\"]\n        _, derivative = ACT[self.activation]\n\n        dz = [g * derivative(zj, aj) for g, zj, aj in zip(grad_out, z, a)]\n        dW = [[dz[j] * x[i] for i in range(self.in_size)] for j in range(self.out_size)]\n        db = dz[:]\n\n        grad_input = [0.0 for _ in range(self.in_size)]\n        for j in range(self.out_size):\n            for i in range(self.in_size):\n                grad_input[i] += self.W[j][i] * dz[j]\n\n        self.grads = {\"dW\": dW, \"db\": db}\n        return grad_input\n\n    def update_sgd(self, lr: float):\n        for j in range(self.out_size):\n            for i in range(self.in_size):\n                self.W[j][i] -= lr * clamp(self.grads[\"dW\"][j][i], -20, 20)\n            self.b[j] -= lr * clamp(self.grads[\"db\"][j], -20, 20)\n\nclass MLP:\n    def __init__(self, sizes: List[int], hidden_activation=\"tanh\", task=\"regression\"):\n        self.sizes = sizes\n        self.task = task\n        self.layers: List[Dense] = []\n\n        for i in range(len(sizes) - 1):\n            last = i == len(sizes) - 2\n            activation = (\"sigmoid\" if task == \"classification\" else \"linear\") if last else hidden_activation\n            self.layers.append(Dense(sizes[i], sizes[i+1], activation))\n\n    def forward(self, x: List[float]) -> List[float]:\n        a = x[:]\n        for layer in self.layers:\n            a = layer.forward(a)\n        return a\n\n    def loss_and_gradient(self, output: List[float], target: List[float]):\n        if self.task == \"classification\":\n            p = clamp(output[0], 1e-7, 1 - 1e-7)\n            y = target[0]\n            loss = -(y * math.log(p) + (1-y) * math.log(1-p))\n            grad = [-(y/p) + (1-y)/(1-p)]\n            return loss, grad\n\n        error = output[0] - target[0]\n        return 0.5 * error * error, [error]\n\n    def train_sample(self, x: List[float], target: List[float], lr=0.03):\n        out = self.forward(x)\n        loss, grad = self.loss_and_gradient(out, target)\n\n        for layer in reversed(self.layers):\n            grad = layer.backward(grad)\n\n        for layer in self.layers:\n            layer.update_sgd(lr)\n\n        return out[0], loss\n\n    def parameter_count(self) -> int:\n        return sum(layer.in_size * layer.out_size + layer.out_size for layer in self.layers)\n\nif __name__ == \"__main__\":\n    random.seed(7)\n\n    model = MLP([1, 4, 4, 1], hidden_activation=\"tanh\", task=\"regression\")\n    print(\"Architecture:\", model.sizes)\n    print(\"Parameters:\", model.parameter_count())\n\n    data = []\n    for i in range(80):\n        x = -2.0 + 4.0 * i / 79.0\n        y = 2.5*x + 1.0\n        data.append(([x], [y]))\n\n    for epoch in range(1, 301):\n        total = 0.0\n        random.shuffle(data)\n\n        for x, y in data:\n            _, loss = model.train_sample(x, y, lr=0.01)\n            total += loss\n\n        if epoch % 25 == 0:\n            print(f\"epoch={epoch:03d} loss={total/len(data):.8f}\")\n\n    for test_x in [-2, -1, 0, 1, 2]:\n        pred = model.forward([float(test_x)])[0]\n        print(f\"x={test_x:>2} target={2.5*test_x+1:>6.2f} pred={pred:>9.5f}\")\n";
+document.getElementById("code").textContent=embeddedPythonSource;
+fetch(enginePath).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.text();})
+  .then(t=>document.getElementById("code").textContent=t)
+  .catch(()=>{ /* fallback incorporato già visibile */ });
+function row(k,v,c="text-slate-200"){return `<div class="flex justify-between gap-3 border-b border-slate-800/60 pb-1"><span class="text-slate-500">${k}</span><span class="${c}">${v}</span></div>`}
+window.addEventListener("message",e=>{
+  if(e.data?.type!=="aiml-state")return;
+  latestState=e.data;
+  document.getElementById("conn").textContent="Sincronizzato";
+  document.getElementById("conn").className="pill rounded-xl px-3 py-2 text-sm text-emerald-300";
+  document.getElementById("phase").textContent=e.data.phase;
+  const L=e.data.last||{};
+  document.getElementById("vars").innerHTML=[
+    row("epoch",e.data.epoch,"text-blue-300"),row("phase",e.data.phase,"text-blue-300"),
+    row("architecture",(e.data.architecture||[]).join(" → ")),row("learning_rate",e.data.lr,"text-purple-300"),
+    row("optimizer",e.data.optimizer),row("prediction",L.output?.[0]?.toFixed?.(6)??"—","text-blue-300"),
+    row("target",L.target?.[0]?.toFixed?.(6)??"—","text-emerald-300"),row("loss",L.loss?.toFixed?.(8)??"—","text-rose-300")
+  ].join("");
+});
+if(window.opener)window.opener.postMessage({type:"aiml-python-ready"},"*");
+
+document.getElementById("runPyodide").onclick=async()=>{
+  const out=document.getElementById("pyout");out.innerHTML+="<div>Caricamento Pyodide…</div>";
+  try{
+    if(!window.loadPyodide){
+      await new Promise((resolve,reject)=>{
+        const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js";s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
+      });
+    }
+    const py=await loadPyodide();
+    if(!latestState?.model || !latestState?.last?.traces?.[0]?.a){
+      throw new Error("Esegui almeno un Forward Pass nella dashboard prima della verifica Python.");
+    }
+
+    const modelJson=JSON.stringify(latestState.model);
+    const inputJson=JSON.stringify(latestState.last.traces[0].a);
+    const jsPred=latestState.last.output?.[0];
+
+    const code=`
+import json, math
+
+model = json.loads(${json.dumps(modelJson)})
+x = json.loads(${json.dumps(inputJson)})
+
+def sigmoid(v):
+    v=max(-40.0,min(40.0,v))
+    return 1.0/(1.0+math.exp(-v))
+
+def activate(name, v):
+    if name == "tanh": return math.tanh(v)
+    if name == "relu": return max(0.0,v)
+    if name == "sigmoid": return sigmoid(v)
+    return v
+
+a = x[:]
+print("Python reale attivo")
+print("Input:", a)
+
+for index, layer in enumerate(model["layers"], start=1):
+    z = []
+    for row, bias in zip(layer["W"], layer["b"]):
+        z.append(sum(w*av for w,av in zip(row,a)) + bias)
+    a = [activate(layer["activation"], value) for value in z]
+    print(f"Layer {index}: z={z}")
+    print(f"Layer {index}: a={a}")
+
+print("Prediction Python =", a[0])
+`;
+    py.setStdout({batched:s=>out.innerHTML+=`<div class="text-emerald-300">${s}</div>`});
+    await py.runPythonAsync(code);
+
+    out.innerHTML+=`<div class="mt-2 text-blue-300">Prediction JavaScript = ${Number(jsPred).toFixed(10)}</div>`;
+    out.innerHTML+=`<div class="text-slate-500">Python usa in questo test gli stessi pesi, bias, activation e input della dashboard.</div>`;
+  }catch(err){out.innerHTML+=`<div class="text-rose-300">Pyodide non disponibile: ${String(err)}</div>`;}
+};
+</script>
+</body></html>

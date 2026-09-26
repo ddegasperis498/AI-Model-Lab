@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.sqlite3
+.venv/
+venv/
+.env
+*.log
+checkpoints/
+models/
+*.pt
+*.pth
+*.safetensors

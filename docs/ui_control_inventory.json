@@ -1,0 +1,1523 @@
+[
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "button",
+    "id": "modeDidacticBtn",
+    "label": "Didattica",
+    "default": "azione",
+    "effect": "Seleziona il motore didattico JavaScript, privilegiando trasparenza e micro-step."
+  },
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "button",
+    "id": "modeAdvancedBtn",
+    "label": "Framework Pro V4",
+    "default": "azione",
+    "effect": "Seleziona l’area Framework Pro: backend FastAPI/PyTorch reale e pagine avanzate V3/V4."
+  },
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "button",
+    "id": "openPythonBtn",
+    "label": "Python Live",
+    "default": "azione",
+    "effect": "Apre Python Live in una finestra separata, sincronizzata con lo stato del laboratorio."
+  },
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "button",
+    "id": "exportModelBtn",
+    "label": "Export Model",
+    "default": "azione",
+    "effect": "Esporta il modello didattico in JSON."
+  },
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "button",
+    "id": "importModelBtn",
+    "label": "Import Model",
+    "default": "azione",
+    "effect": "Apre il selettore file per importare un modello JSON compatibile."
+  },
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "input/file",
+    "id": "importModelFile",
+    "label": "",
+    "default": "",
+    "effect": "Selettore file locale usato dal comando di importazione."
+  },
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "button",
+    "id": "exportDataBtn",
+    "label": "Export Dataset",
+    "default": "azione",
+    "effect": "Esporta il dataset didattico corrente in JSON."
+  },
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "button",
+    "id": "tourBtn",
+    "label": "Tour guidato",
+    "default": "azione",
+    "effect": "Avvia il tour guidato dell’interfaccia didattica."
+  },
+  {
+    "section": "global",
+    "page": "Globale / barra laterale / header",
+    "type": "button",
+    "id": "helpModeBtn",
+    "label": "Help contestuale",
+    "default": "azione",
+    "effect": "Attiva/disattiva l’help contestuale e richiama tooltip/legenda."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "select",
+    "id": "taskMode",
+    "label": "Task",
+    "default": "regression",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "select",
+    "id": "datasetSelect",
+    "label": "Dataset",
+    "default": "regressionLinear",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "input/text",
+    "id": "hiddenSizes",
+    "label": "Hidden layer sizes",
+    "default": "4,4",
+    "effect": "Campo testuale di configurazione o input."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "select",
+    "id": "activationSelect",
+    "label": "Activation",
+    "default": "tanh",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "select",
+    "id": "optimizerSelect",
+    "label": "Optimizer",
+    "default": "adam",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "input/number",
+    "id": "seedInput",
+    "label": "",
+    "default": "42",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "button",
+    "id": "applySeedBtn",
+    "label": "Applica",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "input/range",
+    "id": "lrSlider",
+    "label": "Learning rate 0.030",
+    "default": "0.03",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "input/range",
+    "id": "speedSlider",
+    "label": "Velocità 250 ms",
+    "default": "250",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "input/number",
+    "id": "batchSize",
+    "label": "Batch size",
+    "default": "8",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "button",
+    "id": "rebuildBtn",
+    "label": "Ricostruisci modello",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "button",
+    "id": "startBtn",
+    "label": "Avvia",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "button",
+    "id": "pauseBtn",
+    "label": "Pausa",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "button",
+    "id": "stepEpochBtn",
+    "label": "Epoca",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "button",
+    "id": "stepPhaseBtn",
+    "label": "Fase",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "button",
+    "id": "resetBtn",
+    "label": "Reset",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "dashboard",
+    "page": "Training Controls",
+    "type": "button",
+    "id": "clearLog",
+    "label": "Pulisci",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "neuron",
+    "page": "Dentro un singolo neurone",
+    "type": "input/range",
+    "id": "nx1",
+    "label": "x1",
+    "default": "1.2",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "neuron",
+    "page": "Dentro un singolo neurone",
+    "type": "input/range",
+    "id": "nx2",
+    "label": "x2",
+    "default": "-.7",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "neuron",
+    "page": "Dentro un singolo neurone",
+    "type": "input/range",
+    "id": "nw1",
+    "label": "w1",
+    "default": ".8",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "neuron",
+    "page": "Dentro un singolo neurone",
+    "type": "input/range",
+    "id": "nw2",
+    "label": "w2",
+    "default": "-1.1",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "neuron",
+    "page": "Dentro un singolo neurone",
+    "type": "input/range",
+    "id": "nb",
+    "label": "bias",
+    "default": ".2",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "neuron",
+    "page": "Dentro un singolo neurone",
+    "type": "select",
+    "id": "nact",
+    "label": "",
+    "default": "tanh",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "teacher",
+    "page": "Agente A ↔ Agente B",
+    "type": "button",
+    "id": "teacherStepBtn",
+    "label": "Nuova domanda",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "teacher",
+    "page": "Agente A ↔ Agente B",
+    "type": "button",
+    "id": "teacherAutoBtn",
+    "label": "10 domande automatiche",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "mydata",
+    "page": "Train My Data",
+    "type": "textarea",
+    "id": "customData",
+    "label": "",
+    "default": "1,3\n2,5\n3,7\n4,9\n5,11\n6,13",
+    "effect": "Area dati/testo usata dalla funzione o dal training della pagina corrente."
+  },
+  {
+    "section": "mydata",
+    "page": "Train My Data",
+    "type": "button",
+    "id": "loadCustomBtn",
+    "label": "Carica dataset",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "mydata",
+    "page": "Train My Data",
+    "type": "button",
+    "id": "trainCustomBtn",
+    "label": "100 step training",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "generalization",
+    "page": "Generalization Lab",
+    "type": "button",
+    "id": "resplitBtn",
+    "label": "Rigenera split",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "generalization",
+    "page": "Generalization Lab",
+    "type": "input/range",
+    "id": "trainPct",
+    "label": "Train % 70%",
+    "default": "70",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "generalization",
+    "page": "Generalization Lab",
+    "type": "input/range",
+    "id": "valPct",
+    "label": "Validation % 15%",
+    "default": "15",
+    "effect": "Slider numerico: modifica il valore indicato in tempo reale o per il prossimo step."
+  },
+  {
+    "section": "optimizer",
+    "page": "Optimizer Arena",
+    "type": "button",
+    "id": "runOptimizerArena",
+    "label": "Esegui confronto",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "optimizer",
+    "page": "Optimizer Arena",
+    "type": "input/number",
+    "id": "arenaEpochs",
+    "label": "Epoche confronto",
+    "default": "80",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "optimizer",
+    "page": "Optimizer Arena",
+    "type": "input/number",
+    "id": "arenaSgdLr",
+    "label": "LR SGD",
+    "default": "0.03",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "optimizer",
+    "page": "Optimizer Arena",
+    "type": "input/number",
+    "id": "arenaAdamLr",
+    "label": "LR Adam",
+    "default": "0.01",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "button",
+    "id": "advRefreshHealth",
+    "label": "Verifica backend",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "select",
+    "id": "torchDevice",
+    "label": "Device richiesto",
+    "default": "auto",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/checkbox",
+    "id": "torchAmp",
+    "label": "Automatic Mixed Precision Usa AMP FP16 su CUDA; su CPU resta disattivata automaticamente.",
+    "default": "ON",
+    "effect": "Flag booleano: abilita o disabilita la funzione indicata."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "select",
+    "id": "torchMlpDataset",
+    "label": "Dataset",
+    "default": "linear",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpInput",
+    "label": "Input",
+    "default": "1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpOutput",
+    "label": "Output",
+    "default": "1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/text",
+    "id": "torchMlpHidden",
+    "label": "Hidden sizes",
+    "default": "32,32",
+    "effect": "Campo testuale di configurazione o input."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "select",
+    "id": "torchMlpTask",
+    "label": "Task",
+    "default": "regression",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "select",
+    "id": "torchMlpActivation",
+    "label": "Activation",
+    "default": "relu",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpDropout",
+    "label": "Dropout",
+    "default": "0.0",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "select",
+    "id": "torchMlpOptimizer",
+    "label": "Optimizer",
+    "default": "adamw",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpBatch",
+    "label": "Batch",
+    "default": "32",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpLr",
+    "label": "Learning rate",
+    "default": "0.001",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpWd",
+    "label": "Weight decay",
+    "default": "0.0001",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpClip",
+    "label": "Gradient clip",
+    "default": "1.0",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpSeed",
+    "label": "Seed",
+    "default": "42",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "input/number",
+    "id": "torchMlpSpeed",
+    "label": "Intervallo realtime (ms)",
+    "default": "180",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "button",
+    "id": "torchCreateMlp",
+    "label": "Crea nn.Module",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "button",
+    "id": "torchMlpStep",
+    "label": "1 step",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "button",
+    "id": "torchMlp50",
+    "label": "50 step",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "button",
+    "id": "torchMlpStart",
+    "label": "Realtime",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "pytorch",
+    "page": "PyTorch Advanced Engine",
+    "type": "button",
+    "id": "torchMlpPause",
+    "label": "Pausa",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmDModel",
+    "label": "d_model",
+    "default": "128",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmHeads",
+    "label": "Attention heads",
+    "default": "4",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmLayers",
+    "label": "Transformer blocks",
+    "default": "4",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmContext",
+    "label": "Context length",
+    "default": "64",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmRatio",
+    "label": "MLP ratio",
+    "default": "4",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmDropout",
+    "label": "Dropout",
+    "default": "0.1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "select",
+    "id": "llmOptimizer",
+    "label": "Optimizer",
+    "default": "adamw",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmBatch",
+    "label": "Batch",
+    "default": "8",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmLr",
+    "label": "Learning rate",
+    "default": "0.0003",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmWd",
+    "label": "Weight decay",
+    "default": "0.01",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmClip",
+    "label": "Gradient clip",
+    "default": "1.0",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmSeed",
+    "label": "Seed",
+    "default": "42",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/checkbox",
+    "id": "llmTie",
+    "label": "Tie token embedding ↔ lm_head",
+    "default": "ON",
+    "effect": "Flag booleano: abilita o disabilita la funzione indicata."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmSpeed",
+    "label": "Realtime interval (ms)",
+    "default": "80",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "button",
+    "id": "torchCreateLlm",
+    "label": "Tie token embedding ↔ lm_head",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "button",
+    "id": "llmTrainStepBtn",
+    "label": "1 step",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "button",
+    "id": "llm20",
+    "label": "20 step",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "button",
+    "id": "llmStart",
+    "label": "Realtime",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "button",
+    "id": "llmPause",
+    "label": "Pausa",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "textarea",
+    "id": "llmTrainingText",
+    "label": "",
+    "default": "L'intelligenza artificiale apprende regolarità statistiche dai dati. Un language…",
+    "effect": "Area dati/testo usata dalla funzione o dal training della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/text",
+    "id": "llmPrompt",
+    "label": "",
+    "default": "L'intelligenza ",
+    "effect": "Campo testuale di configurazione o input."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmGenTokens",
+    "label": "New tokens",
+    "default": "80",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmTemperature",
+    "label": "Temperature",
+    "default": "0.8",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "input/number",
+    "id": "llmTopK",
+    "label": "Top-k",
+    "default": "40",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "llm-industrial",
+    "page": "Transformer Language Model reale",
+    "type": "button",
+    "id": "llmGenerate",
+    "label": "Genera",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "torchxray",
+    "page": "Torch X-Ray",
+    "type": "button",
+    "id": "torchRefreshXray",
+    "label": "Aggiorna snapshot",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "torchxray",
+    "page": "Torch X-Ray",
+    "type": "input/text",
+    "id": "checkpointName",
+    "label": "",
+    "default": "experiment",
+    "effect": "Campo testuale di configurazione o input."
+  },
+  {
+    "section": "torchxray",
+    "page": "Torch X-Ray",
+    "type": "button",
+    "id": "saveCheckpoint",
+    "label": "Salva",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "torchxray",
+    "page": "Torch X-Ray",
+    "type": "button",
+    "id": "refreshCheckpoints",
+    "label": "Aggiorna",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4HealthBtn",
+    "label": "Aggiorna sistema",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4DModel",
+    "label": "d_model",
+    "default": "192",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Layers",
+    "label": "Layers",
+    "default": "6",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Heads",
+    "label": "Attention heads",
+    "default": "6",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4KvHeads",
+    "label": "KV heads (GQA)",
+    "default": "2",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Context",
+    "label": "Context",
+    "default": "256",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Ratio",
+    "label": "MLP ratio",
+    "default": "4",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Dropout",
+    "label": "Dropout",
+    "default": "0.05",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Rope",
+    "label": "RoPE θ",
+    "default": "10000",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "select",
+    "id": "v4Tokenizer",
+    "label": "Tokenizer",
+    "default": "byte",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4BpeVocab",
+    "label": "BPE vocab",
+    "default": "384",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4LoraRank",
+    "label": "LoRA rank",
+    "default": "0",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4LoraAlpha",
+    "label": "LoRA alpha",
+    "default": "16",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/checkbox",
+    "id": "v4FreezeBase",
+    "label": "Freeze base con LoRA",
+    "default": "OFF",
+    "effect": "Flag booleano: abilita o disabilita la funzione indicata."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/checkbox",
+    "id": "v4GradCkpt",
+    "label": "Gradient checkpointing",
+    "default": "OFF",
+    "effect": "Flag booleano: abilita o disabilita la funzione indicata."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/checkbox",
+    "id": "v4Sdpa",
+    "label": "PyTorch SDPA",
+    "default": "ON",
+    "effect": "Flag booleano: abilita o disabilita la funzione indicata."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/checkbox",
+    "id": "v4Compile",
+    "label": "torch.compile",
+    "default": "OFF",
+    "effect": "Flag booleano: abilita o disabilita la funzione indicata."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "select",
+    "id": "v4Optimizer",
+    "label": "Optimizer",
+    "default": "adamw",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "select",
+    "id": "v4Amp",
+    "label": "AMP dtype",
+    "default": "auto",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Lr",
+    "label": "LR",
+    "default": "0.0003",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4MinLr",
+    "label": "Min LR",
+    "default": "0.00003",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Warmup",
+    "label": "Warmup steps",
+    "default": "20",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Decay",
+    "label": "LR decay steps",
+    "default": "2000",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Wd",
+    "label": "Weight decay",
+    "default": "0.1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Clip",
+    "label": "Grad clip",
+    "default": "1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Accum",
+    "label": "Grad accumulation",
+    "default": "1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Seed",
+    "label": "Seed",
+    "default": "42",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "select",
+    "id": "v4Device",
+    "label": "Device",
+    "default": "auto",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4ValPct",
+    "label": "Validation %",
+    "default": "10",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4CreateBtn",
+    "label": "Crea Modern Transformer",
+    "default": "azione",
+    "effect": "Crea realmente sul backend un ModernTransformerLM PyTorch con la configurazione V4 corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "textarea",
+    "id": "v4Corpus",
+    "label": "",
+    "default": "AI Model Lab V4 è un laboratorio per capire e sperimentare reti neurali e langua…",
+    "effect": "Area dati/testo usata dalla funzione o dal training della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4JobSteps",
+    "label": "Steps",
+    "default": "200",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Batch",
+    "label": "Batch",
+    "default": "8",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Eval",
+    "label": "Eval ogni",
+    "default": "20",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4StepBtn",
+    "label": "1 step",
+    "default": "azione",
+    "effect": "Esegue un singolo optimizer step V4, includendo i micro-batch di gradient accumulation configurati."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4StartJobBtn",
+    "label": "Avvia Job",
+    "default": "azione",
+    "effect": "Avvia un training job in background sul backend; la UI continua a rimanere responsiva."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4StopJobBtn",
+    "label": "Stop Job",
+    "default": "azione",
+    "effect": "Imposta lo stop event del job V4; il thread termina al successivo punto di controllo."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/text",
+    "id": "v4TokenText",
+    "label": "",
+    "default": "Transformer attention modello",
+    "effect": "Campo testuale di configurazione o input."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4TokenBtn",
+    "label": "Tokenizza",
+    "default": "azione",
+    "effect": "Mostra la tokenizzazione reale del tokenizer attivo (byte o BPE addestrato)."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4EmbedBtn",
+    "label": "Embedding",
+    "default": "azione",
+    "effect": "Calcola la matrice di similarità coseno tra gli embedding dei token del testo inserito."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "textarea",
+    "id": "v4Prompt",
+    "label": "",
+    "default": "AI Model Lab ",
+    "effect": "Area dati/testo usata dalla funzione o dal training della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4GenTokens",
+    "label": "New tokens",
+    "default": "120",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Temp",
+    "label": "Temperature",
+    "default": "0.8",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4TopK",
+    "label": "Top-k",
+    "default": "50",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4TopP",
+    "label": "Top-p",
+    "default": "0.95",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/number",
+    "id": "v4Rep",
+    "label": "Repetition penalty",
+    "default": "1.05",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4GenerateBtn",
+    "label": "Genera autoregressivamente",
+    "default": "azione",
+    "effect": "Esegue generazione autoregressiva con temperature, top-k, top-p e repetition penalty."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "input/text",
+    "id": "v4SaveName",
+    "label": "",
+    "default": "ultimate_experiment",
+    "effect": "Campo testuale di configurazione o input."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "textarea",
+    "id": "v4Notes",
+    "label": "",
+    "default": "",
+    "effect": "Area dati/testo usata dalla funzione o dal training della pagina corrente."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4CheckpointBtn",
+    "label": "Checkpoint .pt",
+    "default": "azione",
+    "effect": "Salva un checkpoint .pt V4 con modello, optimizer, tokenizer, step e dataset tokenizzato."
+  },
+  {
+    "section": "ultimate-llm",
+    "page": "Ultimate LLM Studio V4",
+    "type": "button",
+    "id": "v4ExperimentBtn",
+    "label": "Salva esperimento",
+    "default": "azione",
+    "effect": "Registra configurazione e metriche correnti nel database SQLite degli esperimenti."
+  },
+  {
+    "section": "autograd-v4",
+    "page": "Autograd Microscope",
+    "type": "input/number",
+    "id": "agX",
+    "label": "x",
+    "default": "2",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "autograd-v4",
+    "page": "Autograd Microscope",
+    "type": "input/number",
+    "id": "agW",
+    "label": "w",
+    "default": "-1.5",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "autograd-v4",
+    "page": "Autograd Microscope",
+    "type": "input/number",
+    "id": "agB",
+    "label": "b",
+    "default": "0.5",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "autograd-v4",
+    "page": "Autograd Microscope",
+    "type": "input/number",
+    "id": "agTarget",
+    "label": "target",
+    "default": "1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "autograd-v4",
+    "page": "Autograd Microscope",
+    "type": "button",
+    "id": "agForwardBtn",
+    "label": "Costruisci Forward Graph",
+    "default": "azione",
+    "effect": "Costruisce un computational DAG scalare per x·w+b → tanh → errore²/2."
+  },
+  {
+    "section": "autograd-v4",
+    "page": "Autograd Microscope",
+    "type": "button",
+    "id": "agBackwardBtn",
+    "label": "Backward()",
+    "default": "azione",
+    "effect": "Esegue reverse-mode autodiff sul DAG e mostra il gradiente globale di ogni nodo."
+  },
+  {
+    "section": "autograd-v4",
+    "page": "Autograd Microscope",
+    "type": "button",
+    "id": "agUpdateBtn",
+    "label": "Gradient Descent Update",
+    "default": "azione",
+    "effect": "Applica un update di gradient descent a w e b usando i gradienti calcolati."
+  },
+  {
+    "section": "autograd-v4",
+    "page": "Autograd Microscope",
+    "type": "input/number",
+    "id": "agLr",
+    "label": "Learning rate",
+    "default": "0.1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "select",
+    "id": "scalePreset",
+    "label": "Preset",
+    "default": "custom",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "input/number",
+    "id": "scaleVocab",
+    "label": "Vocab",
+    "default": "32000",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "input/number",
+    "id": "scaleD",
+    "label": "d_model",
+    "default": "1024",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "input/number",
+    "id": "scaleHeads",
+    "label": "Heads",
+    "default": "16",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "input/number",
+    "id": "scaleKv",
+    "label": "KV heads",
+    "default": "4",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "input/number",
+    "id": "scaleLayers",
+    "label": "Layers",
+    "default": "24",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "input/number",
+    "id": "scaleContext",
+    "label": "Context",
+    "default": "4096",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "input/number",
+    "id": "scaleRatio",
+    "label": "MLP ratio",
+    "default": "4",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "input/number",
+    "id": "scaleBatch",
+    "label": "Batch",
+    "default": "1",
+    "effect": "Parametro numerico: influenza configurazione, training, visualizzazione o stima della pagina corrente."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "select",
+    "id": "scalePrecision",
+    "label": "Precision bytes",
+    "default": "2",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "select",
+    "id": "scaleOptimizer",
+    "label": "Optimizer",
+    "default": "adamw",
+    "effect": "Seleziona una modalità/opzione; l’effetto viene applicato quando il relativo modello viene ricostruito o il comando associato viene eseguito."
+  },
+  {
+    "section": "scale-v4",
+    "page": "Scale & Memory Lab",
+    "type": "button",
+    "id": "scaleCalcBtn",
+    "label": "Calcola scala",
+    "default": "azione",
+    "effect": "Calcola parametri, memoria e FLOPs approssimativi senza allocare realmente il modello."
+  },
+  {
+    "section": "experiments-v4",
+    "page": "Experiment Tracker",
+    "type": "button",
+    "id": "expRefreshBtn",
+    "label": "Aggiorna",
+    "default": "azione",
+    "effect": "Rilegge da SQLite la lista degli esperimenti salvati."
+  },
+  {
+    "section": "transformer",
+    "page": "Mini Transformer / Self-Attention",
+    "type": "textarea",
+    "id": "attentionText",
+    "label": "",
+    "default": "il modello impara quali parole sono importanti nel contesto",
+    "effect": "Area dati/testo usata dalla funzione o dal training della pagina corrente."
+  },
+  {
+    "section": "transformer",
+    "page": "Mini Transformer / Self-Attention",
+    "type": "button",
+    "id": "attentionRunBtn",
+    "label": "Calcola Attention",
+    "default": "azione",
+    "effect": "Esegue l’azione descritta dal testo del pulsante nella sezione corrente."
+  }
+]

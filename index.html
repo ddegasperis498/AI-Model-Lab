@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Model Lab</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="min-h-screen p-3 lg:p-5">
+<div class="max-w-[1900px] mx-auto grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] gap-4">
+
+<aside class="glass rounded-3xl p-4 lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] overflow-y-auto scrollbar">
+  <div class="flex items-center gap-3 mb-5">
+    <div class="w-11 h-11 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center"><i class="fa-solid fa-brain text-blue-300"></i></div>
+    <div><div class="font-semibold">AI Model Lab</div><div class="text-[11px] text-slate-500">Neural X-Ray Studio · V4.1 Professional</div></div>
+  </div>
+  <div class="mode-switch mb-4">
+    <button id="modeDidacticBtn" class="mode-active flex-1"><i class="fa-solid fa-graduation-cap mr-1"></i>Didattica</button>
+    <button id="modeAdvancedBtn" class="flex-1"><i class="fa-brands fa-python mr-1"></i>Framework Pro V4.1</button>
+  </div>
+  <nav class="space-y-1">
+    <button class="nav-btn active" data-section="dashboard" data-title="Dashboard"><i class="fa-solid fa-gauge w-6"></i>Dashboard</button>
+    <button class="nav-btn" data-section="neuron" data-title="Neuron Lab"><i class="fa-solid fa-circle-nodes w-6"></i>Neuron Lab</button>
+    <button class="nav-btn" data-section="builder" data-title="Network Builder"><i class="fa-solid fa-diagram-project w-6"></i>Network Builder</button>
+    <button class="nav-btn" data-section="teacher" data-title="Teacher vs Student"><i class="fa-solid fa-user-graduate w-6"></i>Teacher vs Student</button>
+    <button class="nav-btn" data-section="mydata" data-title="Train My Data"><i class="fa-solid fa-table-list w-6"></i>Train My Data</button>
+    <button class="nav-btn" data-section="explorer" data-title="Forward / Backprop"><i class="fa-solid fa-code-branch w-6"></i>Forward / Backprop</button>
+    <button class="nav-btn" data-section="parameters" data-title="Parameter Inspector"><i class="fa-solid fa-sliders w-6"></i>Parameters</button>
+    <button class="nav-btn" data-section="dataset" data-title="Dataset & Decision Surface"><i class="fa-solid fa-chart-scatter w-6"></i>Dataset Surface</button>
+    <button class="nav-btn" data-section="graph" data-title="Computational Graph"><i class="fa-solid fa-share-nodes w-6"></i>Computational Graph</button>
+    <button class="nav-btn" data-section="xray" data-title="Model X-Ray"><i class="fa-solid fa-microscope w-6"></i>Model X-Ray</button>
+    <button class="nav-btn" data-section="generalization" data-title="Generalization Lab"><i class="fa-solid fa-flask-vial w-6"></i>Generalization</button>
+    <button class="nav-btn" data-section="diagnostics" data-title="Training Diagnostics"><i class="fa-solid fa-heart-pulse w-6"></i>Diagnostics</button>
+    <button class="nav-btn" data-section="optimizer" data-title="Optimizer Arena"><i class="fa-solid fa-scale-balanced w-6"></i>Optimizer Arena</button>
+    <button class="nav-btn" data-section="transformer" data-title="Mini Transformer"><i class="fa-solid fa-language w-6"></i>Mini Transformer</button>
+    <button class="nav-btn" data-section="docs" data-title="Documentation"><i class="fa-solid fa-book-open w-6"></i>Documentation</button>
+    <button class="nav-btn advanced-nav hidden" data-section="pytorch" data-title="PyTorch Engine"><i class="fa-solid fa-microchip w-6"></i>PyTorch Engine</button>
+    <button class="nav-btn advanced-nav hidden" data-section="llm-industrial" data-title="Transformer LM"><i class="fa-solid fa-wand-magic-sparkles w-6"></i>Transformer LM</button>
+    <button class="nav-btn advanced-nav hidden" data-section="torchxray" data-title="Torch X-Ray"><i class="fa-solid fa-x-ray w-6"></i>Torch X-Ray</button>
+    <button class="nav-btn advanced-nav hidden" data-section="ultimate-llm" data-title="Ultimate LLM Studio"><i class="fa-solid fa-rocket w-6"></i>Ultimate LLM</button>
+    <button class="nav-btn advanced-nav hidden" data-section="autograd-v4" data-title="Autograd Microscope"><i class="fa-solid fa-diagram-project w-6"></i>Autograd Microscope</button>
+    <button class="nav-btn advanced-nav hidden" data-section="scale-v4" data-title="Scale & Memory Lab"><i class="fa-solid fa-memory w-6"></i>Scale & Memory</button>
+    <button class="nav-btn advanced-nav hidden" data-section="experiments-v4" data-title="Experiment Tracker"><i class="fa-solid fa-flask w-6"></i>Experiments</button>
+  </nav>
+  <div class="mt-5 pt-4 border-t border-slate-800 space-y-2">
+    <button id="openPythonBtn" class="w-full rounded-xl px-3 py-2.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-200 text-sm"><i class="fa-brands fa-python mr-2"></i>Python Live</button>
+    <button id="exportModelBtn" class="w-full rounded-xl px-3 py-2.5 bg-slate-800 border border-slate-700 text-sm"><i class="fa-solid fa-download mr-2"></i>Export Model</button>
+    <button id="importModelBtn" class="w-full rounded-xl px-3 py-2.5 bg-slate-800 border border-slate-700 text-sm"><i class="fa-solid fa-upload mr-2"></i>Import Model</button>
+    <input id="importModelFile" type="file" accept="application/json,.json" class="hidden">
+    <button id="exportDataBtn" class="w-full rounded-xl px-3 py-2.5 bg-slate-800 border border-slate-700 text-sm"><i class="fa-solid fa-database mr-2"></i>Export Dataset</button>
+  </div>
+</aside>
+
+<div class="space-y-4 min-w-0">
+<header class="glass rounded-3xl p-4 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3">
+  <div><h1 id="pageTitle" class="text-2xl font-semibold">Dashboard</h1><p class="text-sm text-slate-400">Costruisci, addestra, ferma e ispeziona una rete neurale operazione per operazione.</p></div>
+  <div class="flex gap-2 flex-wrap text-sm">
+    <button id="tourBtn" class="pill rounded-xl px-3 py-2 hover:bg-blue-500/10"><i class="fa-solid fa-route mr-2 text-blue-300"></i>Tour guidato</button>
+    <button id="helpModeBtn" class="pill rounded-xl px-3 py-2 hover:bg-purple-500/10"><i class="fa-regular fa-circle-question mr-2 text-purple-300"></i>Help contestuale</button>
+    <span class="pill rounded-xl px-3 py-2">Stato: <b id="runState" class="text-blue-300">Pronto</b></span><span class="pill rounded-xl px-3 py-2">Engine: <b id="engineModeBadge" class="text-emerald-300">MLP didattico</b></span></div>
+</header>
+
+<section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+  <div class="metric rounded-2xl p-3"><div class="small-label">Epoca</div><div id="epochMetric" class="text-xl mt-1 font-semibold">0</div></div>
+  <div class="metric rounded-2xl p-3"><div class="small-label">Loss</div><div id="lossMetric" class="text-xl mt-1 font-semibold text-rose-300">—</div></div>
+  <div class="metric rounded-2xl p-3"><div class="small-label">Parametri</div><div id="paramMetric" class="text-xl mt-1 font-semibold text-purple-300">—</div></div>
+  <div class="metric rounded-2xl p-3"><div class="small-label">Architettura</div><div id="archMetric" class="text-lg mt-1 font-semibold text-blue-300">—</div></div>
+  <div class="metric rounded-2xl p-3"><div class="small-label">Learning Rate</div><div id="lrMetric" class="text-xl mt-1 font-semibold">0.03</div></div>
+  <div class="metric rounded-2xl p-3"><div class="small-label">Fase</div><div id="phaseMetric" class="text-sm mt-2 font-semibold text-emerald-300">idle</div></div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="section active space-y-4">
+<div class="grid grid-cols-1 2xl:grid-cols-[330px_minmax(0,1fr)_420px] gap-4">
+  <div class="glass rounded-3xl p-4 h-fit">
+    <h2 class="font-semibold mb-4"><i class="fa-solid fa-sliders text-blue-300 mr-2"></i>Training Controls</h2>
+    <div class="space-y-4">
+      <div><label class="text-sm text-slate-300">Task</label><select id="taskMode" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="regression">Regressione</option><option value="classification">Classificazione binaria</option></select></div>
+      <div><label class="text-sm text-slate-300">Dataset</label><select id="datasetSelect" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="regressionLinear">Linear y=2.5x+1</option><option value="regressionSine">Sine</option><option value="xor">XOR</option><option value="circles">Circles</option></select></div>
+      <div><label class="text-sm text-slate-300">Hidden layer sizes</label><input id="hiddenSizes" value="4,4" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><div class="text-xs text-slate-500 mt-1">Esempio: 4,4 oppure 8,6,4</div></div>
+      <div><label class="text-sm text-slate-300">Activation</label><select id="activationSelect" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option>tanh</option><option>relu</option><option>sigmoid</option></select></div>
+      <div><label class="text-sm text-slate-300">Optimizer</label><select id="optimizerSelect" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="adam">Adam</option><option value="sgd">SGD</option></select></div>
+      <div><label class="text-sm text-slate-300">Seed riproducibile <span class="help-dot" title="Stesso seed = stessi pesi iniziali e stessa sequenza pseudocasuale.">?</span></label><div class="flex gap-2 mt-2"><input id="seedInput" type="number" value="42" class="min-w-0 flex-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><button id="applySeedBtn" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2">Applica</button></div></div>
+      <div><label class="text-sm text-slate-300">Preset Learning Rate</label><div class="grid grid-cols-4 gap-1 mt-2"><button class="lrPreset rounded-lg bg-slate-800 px-2 py-1.5 text-xs" data-lr="0.001">0.001</button><button class="lrPreset rounded-lg bg-slate-800 px-2 py-1.5 text-xs" data-lr="0.01">0.01</button><button class="lrPreset rounded-lg bg-slate-800 px-2 py-1.5 text-xs" data-lr="0.03">0.03</button><button class="lrPreset rounded-lg bg-slate-800 px-2 py-1.5 text-xs" data-lr="0.1">0.1</button></div></div>
+      <div><label class="flex justify-between text-sm"><span>Learning rate</span><span id="lrText" class="font-mono text-blue-300">0.030</span></label><input id="lrSlider" type="range" min="0.001" max="0.2" step="0.001" value="0.03" class="w-full accent-blue-500"></div>
+      <div><label class="flex justify-between text-sm"><span>Velocità</span><span id="speedText" class="font-mono text-purple-300">250 ms</span></label><input id="speedSlider" type="range" min="30" max="1500" step="10" value="250" class="w-full accent-purple-500"></div>
+      <div><label class="text-sm">Batch size</label><input id="batchSize" type="number" min="1" max="128" value="8" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div>
+      <button id="rebuildBtn" class="w-full rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-2.5">Ricostruisci modello</button>
+      <div class="grid grid-cols-2 gap-2">
+        <button id="startBtn" class="rounded-xl bg-blue-600 px-3 py-2.5"><i class="fa-solid fa-play mr-2"></i>Avvia</button>
+        <button id="pauseBtn" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2.5"><i class="fa-solid fa-pause mr-2"></i>Pausa</button>
+        <button id="stepEpochBtn" class="rounded-xl bg-purple-600 px-3 py-2.5"><i class="fa-solid fa-forward-step mr-2"></i>Epoca</button>
+        <button id="stepPhaseBtn" class="rounded-xl bg-emerald-700 px-3 py-2.5"><i class="fa-solid fa-shoe-prints mr-2"></i>Fase</button>
+      </div>
+      <button id="resetBtn" class="w-full rounded-xl bg-rose-600/80 px-3 py-2.5"><i class="fa-solid fa-rotate-left mr-2"></i>Reset</button>
+    </div>
+  </div>
+
+  <div class="space-y-4">
+    <div class="glass rounded-3xl p-4"><div class="flex justify-between mb-3"><div><h2 class="font-semibold">Rete neurale live</h2><p class="text-xs text-slate-500">Spessore = |peso| · verde positivo · rosso negativo</p></div></div><div class="h-[500px] rounded-2xl overflow-hidden border border-slate-800 bg-slate-950/40"><canvas id="networkCanvas" class="w-full h-full"></canvas></div></div>
+    <div class="glass rounded-3xl p-4"><h2 class="font-semibold mb-3">Dataset / Decision Surface</h2><div class="h-[330px] rounded-2xl overflow-hidden border border-slate-800 bg-slate-950/40"><canvas id="datasetCanvas" class="w-full h-full"></canvas></div></div>
+  </div>
+
+  <div class="space-y-4">
+    <div class="glass rounded-3xl p-4"><h2 class="font-semibold mb-3">Loss</h2><div class="h-[240px]"><canvas id="lossChart"></canvas></div></div>
+    <div class="glass rounded-3xl p-4"><div class="flex justify-between mb-3"><h2 class="font-semibold">Terminale educativo</h2><button id="clearLog" class="text-xs pill rounded-lg px-2 py-1">Pulisci</button></div><div id="terminal" class="scrollbar h-[370px] overflow-y-auto rounded-2xl bg-black/30 border border-slate-800 p-3 text-xs font-mono leading-6"></div></div>
+  </div>
+</div>
+</section>
+
+<!-- NEURON LAB -->
+<section id="neuron" class="section">
+<div class="glass rounded-3xl p-5">
+<h2 class="text-xl font-semibold mb-2">Dentro un singolo neurone</h2><p class="text-sm text-slate-400 mb-5">Modifica input, pesi e bias e osserva il calcolo esatto.</p>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+<div class="space-y-4">
+  <div><label>x1 <span id="nx1Val" class="text-blue-300"></span></label><input id="nx1" type="range" min="-3" max="3" step=".05" value="1.2" class="w-full"></div>
+  <div><label>x2 <span id="nx2Val" class="text-blue-300"></span></label><input id="nx2" type="range" min="-3" max="3" step=".05" value="-.7" class="w-full"></div>
+  <div><label>w1 <span id="nw1Val" class="text-emerald-300"></span></label><input id="nw1" type="range" min="-3" max="3" step=".05" value=".8" class="w-full"></div>
+  <div><label>w2 <span id="nw2Val" class="text-emerald-300"></span></label><input id="nw2" type="range" min="-3" max="3" step=".05" value="-1.1" class="w-full"></div>
+  <div><label>bias <span id="nbVal" class="text-purple-300"></span></label><input id="nb" type="range" min="-3" max="3" step=".05" value=".2" class="w-full"></div>
+  <select id="nact" class="rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option>tanh</option><option>relu</option><option>sigmoid</option><option>linear</option></select>
+</div>
+<div class="code rounded-2xl p-5 font-mono text-sm leading-8"><div class="text-slate-500 mb-3">z = x1·w1 + x2·w2 + b</div><div id="neuronFormula"></div></div>
+</div>
+</div>
+</section>
+
+<!-- BUILDER -->
+<section id="builder" class="section">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold mb-2">Network Builder</h2><p class="text-sm text-slate-400 mb-4">L'architettura è controllata dal campo "Hidden layer sizes" della Dashboard.</p><div id="builderLayers" class="flex items-center gap-3 overflow-x-auto scrollbar py-4"></div><div class="mt-4 text-sm text-slate-400">Ogni connessione è un peso trainabile. Ogni neurone non-input ha anche un bias.</div></div>
+</section>
+
+<!-- TEACHER -->
+<section id="teacher" class="section">
+<div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-4">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Agente A ↔ Agente B</h2><p class="text-sm text-slate-400 mt-1 mb-4">A conosce la regola y=2.5x+1; B vede solo esempi e corregge i propri pesi.</p><div id="teacherChat" class="scrollbar h-[560px] overflow-y-auto space-y-3"></div></div>
+<div class="glass rounded-3xl p-5 h-fit"><button id="teacherStepBtn" class="w-full rounded-xl bg-blue-600 px-3 py-3 mb-2">Nuova domanda</button><button id="teacherAutoBtn" class="w-full rounded-xl bg-purple-600 px-3 py-3">10 domande automatiche</button><p class="text-xs text-slate-500 mt-4">Ogni risposta genera una loss, poi backpropagation e aggiornamento dei parametri.</p></div>
+</div>
+</section>
+
+<!-- MY DATA -->
+<section id="mydata" class="section">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Train My Data</h2><p class="text-sm text-slate-400 mt-1">Inserisci coppie input/risposta. Il modello non riceve la formula: apprende dagli esempi.</p>
+<textarea id="customData" class="w-full h-[300px] mt-4 rounded-2xl bg-slate-950/60 border border-slate-800 p-4 font-mono text-sm">1,3
+2,5
+3,7
+4,9
+5,11
+6,13</textarea>
+<div class="flex gap-2 mt-3"><button id="loadCustomBtn" class="rounded-xl bg-blue-600 px-4 py-2.5">Carica dataset</button><button id="trainCustomBtn" class="rounded-xl bg-emerald-700 px-4 py-2.5">100 step training</button></div>
+</div>
+</section>
+
+<!-- EXPLORER -->
+<section id="explorer" class="section">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Forward / Backprop Explorer</h2><p class="text-sm text-slate-400 mt-1 mb-4">Usa "Fase" nella Dashboard per avanzare: Forward → Loss → Backprop → Update.</p><div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+<div class="phase rounded-2xl border border-slate-800 p-4"><b class="text-blue-300">1. Forward</b><p class="text-xs text-slate-500 mt-2">a = activation(Wx+b)</p></div>
+<div class="phase rounded-2xl border border-slate-800 p-4"><b class="text-rose-300">2. Loss</b><p class="text-xs text-slate-500 mt-2">Misura l'errore.</p></div>
+<div class="phase rounded-2xl border border-slate-800 p-4"><b class="text-purple-300">3. Backprop</b><p class="text-xs text-slate-500 mt-2">Calcola ∂L/∂parametro.</p></div>
+<div class="phase rounded-2xl border border-slate-800 p-4"><b class="text-emerald-300">4. Update</b><p class="text-xs text-slate-500 mt-2">p ← p − η·grad.</p></div>
+</div></div>
+</section>
+
+<!-- PARAMETERS -->
+<section id="parameters" class="section">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold mb-3">Parameter Inspector</h2><div class="scrollbar overflow-auto max-h-[680px]"><table><thead><tr class="text-slate-500 text-xs"><th>Parametro</th><th>Prima</th><th>Gradiente</th><th>Δ Update</th><th>Dopo</th><th>Tipo</th></tr></thead><tbody id="paramBody"></tbody></table></div></div>
+</section>
+
+<!-- DATASET -->
+<section id="dataset" class="section">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold mb-3">Dataset & Decision Surface</h2><p class="text-sm text-slate-400 mb-4">Per classificazione vedrai anche la superficie decisionale appresa dalla rete.</p><div class="h-[650px] rounded-2xl overflow-hidden border border-slate-800 bg-slate-950/40"><canvas id="datasetCanvasMirror" class="hidden"></canvas><div class="text-slate-500 p-5">La visualizzazione interattiva completa è nella Dashboard per evitare duplicazioni di calcolo. Cambia dataset e osserva come si modifica la decision surface.</div></div></div>
+</section>
+
+<!-- GRAPH -->
+<section id="graph" class="section">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Computational Graph</h2><p class="text-sm text-slate-400 mt-1 mb-5">Rappresentazione del forward corrente: valori pre-attivazione z e attivazioni a.</p><div id="graphArea" class="flex flex-wrap items-center gap-3"></div></div>
+</section>
+
+<!-- XRAY -->
+<section id="xray" class="section">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Model X-Ray</h2><p id="xraySummary" class="text-sm text-blue-300 mt-1 mb-4"></p><div id="xrayTree" class="space-y-3"></div></div>
+</section>
+
+
+<!-- GENERALIZATION -->
+<section id="generalization" class="section space-y-4">
+  <div class="glass rounded-3xl p-5"><div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4"><div><h2 class="text-xl font-semibold">Generalization Lab</h2><p class="text-sm text-slate-400 mt-1">Train, validation e test mostrano se il modello generalizza oltre gli esempi usati per aggiornare i pesi.</p></div><button id="resplitBtn" class="rounded-xl bg-blue-600 px-4 py-2.5">Rigenera split</button></div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5"><div><label class="text-sm">Train % <span id="trainPctText" class="text-blue-300">70%</span></label><input id="trainPct" type="range" min="40" max="90" value="70" class="w-full"></div><div><label class="text-sm">Validation % <span id="valPctText" class="text-purple-300">15%</span></label><input id="valPct" type="range" min="5" max="40" value="15" class="w-full"></div><div class="metric rounded-2xl p-4"><div class="small-label">Test % automatico</div><div id="testPctText" class="text-xl font-semibold mt-1">15%</div></div></div></div>
+  <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3"><div class="metric rounded-2xl p-4"><div class="small-label">Train Loss</div><div id="trainLossAdv" class="text-xl mt-1 text-blue-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Val Loss</div><div id="valLossAdv" class="text-xl mt-1 text-purple-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Test Loss</div><div id="testLossAdv" class="text-xl mt-1 text-emerald-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Generalization Gap</div><div id="gapAdv" class="text-xl mt-1">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Accuracy / R²</div><div id="scoreAdv" class="text-xl mt-1 text-amber-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Diagnosi</div><div id="overfitStatus" class="text-sm mt-2">—</div></div></div>
+  <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Curve di generalizzazione</h3><div class="h-[330px]"><canvas id="generalizationChart"></canvas></div></div>
+  <div id="confusionBox" class="glass rounded-3xl p-5 hidden"><h3 class="font-semibold mb-3">Confusion Matrix</h3><div id="confusionMatrix" class="grid grid-cols-2 gap-2 max-w-lg"></div></div>
+</section>
+
+<!-- DIAGNOSTICS -->
+<section id="diagnostics" class="section space-y-4"><div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Training Diagnostics</h2><p class="text-sm text-slate-400 mt-1">Monitora gradienti, pesi, dead ReLU e stabilità.</p></div><div class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="metric rounded-2xl p-4"><div class="small-label">Gradient L2</div><div id="gradNorm" class="text-xl mt-1">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Max |Gradient|</div><div id="gradMax" class="text-xl mt-1">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Weight L2</div><div id="weightNorm" class="text-xl mt-1">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Dead ReLU</div><div id="deadRelu" class="text-xl mt-1">—</div></div></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Health Monitor</h3><div id="healthMonitor" class="space-y-3 text-sm"></div></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Gradient Flow per layer</h3><div id="gradientFlow" class="space-y-3"></div></div></section>
+
+<!-- OPTIMIZER -->
+<section id="optimizer" class="section space-y-4"><div class="glass rounded-3xl p-5"><div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4"><div><h2 class="text-xl font-semibold">Optimizer Arena</h2><p class="text-sm text-slate-400 mt-1">Confronta SGD e Adam dagli stessi pesi iniziali.</p></div><button id="runOptimizerArena" class="rounded-xl bg-purple-600 px-4 py-2.5">Esegui confronto</button></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5"><div><label class="text-sm">Epoche confronto</label><input id="arenaEpochs" type="number" value="80" min="10" max="500" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="text-sm">LR SGD</label><input id="arenaSgdLr" type="number" value="0.03" step="0.001" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="text-sm">LR Adam</label><input id="arenaAdamLr" type="number" value="0.01" step="0.001" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div></div><div class="glass rounded-3xl p-5"><div class="h-[380px]"><canvas id="optimizerChart"></canvas></div><div id="optimizerSummary" class="text-sm text-slate-400 mt-4"></div></div></section>
+
+
+<!-- PYTORCH ADVANCED ENGINE -->
+<section id="pytorch" class="section space-y-4">
+  <div class="glass rounded-3xl p-5 torch-grid">
+    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+      <div><h2 class="text-xl font-semibold"><i class="fa-brands fa-python text-yellow-300 mr-2"></i>PyTorch Advanced Engine</h2><p class="text-sm text-slate-400 mt-1">Questa modalità usa realmente PyTorch, autograd e optimizer Python nel backend locale. Non è una simulazione JavaScript.</p></div>
+      <div class="flex gap-2 flex-wrap"><button id="advRefreshHealth" class="rounded-xl bg-blue-600 px-4 py-2.5"><i class="fa-solid fa-rotate mr-2"></i>Verifica backend</button><a href="http://127.0.0.1:8765/docs" target="_blank" class="rounded-xl bg-slate-800 border border-slate-700 px-4 py-2.5"><i class="fa-solid fa-code mr-2"></i>Swagger API</a></div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-5">
+      <div class="metric rounded-2xl p-4"><div class="small-label">Backend</div><div id="advBackendStatus" class="text-lg mt-1 text-amber-300">Verifica…</div></div>
+      <div class="metric rounded-2xl p-4"><div class="small-label">PyTorch</div><div id="advTorchVersion" class="text-lg mt-1 text-blue-300">—</div></div>
+      <div class="metric rounded-2xl p-4"><div class="small-label">Device</div><div id="advDeviceName" class="text-sm mt-2">—</div></div>
+      <div class="metric rounded-2xl p-4"><div class="small-label">CUDA</div><div id="advCuda" class="text-sm mt-2">—</div></div>
+      <div class="metric rounded-2xl p-4"><div class="small-label">CPU Threads</div><div id="advThreads" class="text-lg mt-1">—</div></div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <div><label class="text-sm">Device richiesto</label><select id="torchDevice" class="w-full mt-2 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="auto">Auto: CUDA se disponibile</option><option value="cpu">CPU</option><option value="cuda">CUDA</option></select></div>
+      <label class="industrial-card rounded-2xl p-4 flex items-center gap-3 cursor-pointer"><input id="torchAmp" type="checkbox" checked class="accent-blue-500"><div><div class="font-medium">Automatic Mixed Precision</div><div class="text-xs text-slate-500">Usa AMP FP16 su CUDA; su CPU resta disattivata automaticamente.</div></div></label>
+    </div>
+    <div id="advancedBackendHint" class="mt-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-100/80">Verifica del backend PyTorch in corso…</div>
+  </div>
+
+  <div class="grid grid-cols-1 2xl:grid-cols-[360px_minmax(0,1fr)_410px] gap-4">
+    <div class="glass rounded-3xl p-5 h-fit">
+      <h3 class="font-semibold mb-4">MLP PyTorch reale</h3>
+      <div class="space-y-3 text-sm">
+        <div><label>Dataset</label><select id="torchMlpDataset" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="linear">Linear y=2.5x+1</option><option value="sine">sin(x)</option><option value="xor">XOR</option><option value="circles">Circles</option></select></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Input</label><input id="torchMlpInput" type="number" value="1" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Output</label><input id="torchMlpOutput" type="number" value="1" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div><label>Hidden sizes</label><input id="torchMlpHidden" value="32,32" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Task</label><select id="torchMlpTask" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="regression">Regression</option><option value="classification">Binary classification</option></select></div><div><label>Activation</label><select id="torchMlpActivation" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="relu">ReLU</option><option value="gelu">GELU</option><option value="tanh">tanh</option><option value="sigmoid">sigmoid</option></select></div></div>
+        <div><label>Dropout</label><input id="torchMlpDropout" type="number" value="0.0" min="0" max="0.9" step="0.05" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Optimizer</label><select id="torchMlpOptimizer" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="adamw">AdamW</option><option value="adam">Adam</option><option value="sgd">SGD + momentum</option></select></div><div><label>Batch</label><input id="torchMlpBatch" type="number" value="32" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Learning rate</label><input id="torchMlpLr" type="number" value="0.001" step="0.0001" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Weight decay</label><input id="torchMlpWd" type="number" value="0.0001" step="0.0001" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Gradient clip</label><input id="torchMlpClip" type="number" value="1.0" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Seed</label><input id="torchMlpSeed" type="number" value="42" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div><label>Intervallo realtime (ms)</label><input id="torchMlpSpeed" type="number" value="180" min="40" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div>
+        <button id="torchCreateMlp" class="w-full rounded-xl bg-blue-600 px-3 py-2.5">Crea nn.Module</button>
+        <div class="grid grid-cols-2 gap-2"><button id="torchMlpStep" class="rounded-xl bg-purple-600 px-3 py-2.5">1 step</button><button id="torchMlp50" class="rounded-xl bg-purple-600/70 px-3 py-2.5">50 step</button><button id="torchMlpStart" class="rounded-xl bg-emerald-700 px-3 py-2.5">Realtime</button><button id="torchMlpPause" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2.5">Pausa</button></div>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Loss calcolata da PyTorch</h3><div class="h-[330px]"><canvas id="torchMlpChart"></canvas></div></div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Activation hooks</h3><p class="text-xs text-slate-500 mb-3">Forward hooks reali su Linear e activation: media, deviazione standard e frazione di zeri.</p><div id="torchActivationStats" class="grid grid-cols-1 md:grid-cols-2 gap-2"></div></div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="metric rounded-2xl p-4"><div class="small-label">Step</div><div id="torchStep" class="text-xl mt-1">0</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Parametri</div><div id="torchParams" class="text-xl mt-1 text-purple-300">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Loss</div><div id="torchLoss" class="text-xl mt-1 text-rose-300">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Gradient L2</div><div id="torchGrad" class="text-xl mt-1">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Weight L2</div><div id="torchWeight" class="text-xl mt-1">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Device</div><div id="torchDeviceMetric" class="text-sm mt-2 text-emerald-300">—</div></div>
+      </div>
+      <div class="glass rounded-3xl p-4"><h3 class="font-semibold mb-3">PyTorch Event Log</h3><div id="torchLog" class="scrollbar h-[350px] overflow-auto rounded-2xl bg-black/30 border border-slate-800 p-3 text-xs font-mono leading-6"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REAL TRANSFORMER LANGUAGE MODEL -->
+<section id="llm-industrial" class="section space-y-4">
+  <div class="glass rounded-3xl p-5 torch-grid"><h2 class="text-xl font-semibold"><i class="fa-solid fa-wand-magic-sparkles text-purple-300 mr-2"></i>Transformer Language Model reale</h2><p class="text-sm text-slate-400 mt-1">Byte-level autoregressive Transformer: token embedding, positional embedding, causal multi-head self-attention, residual connection, LayerNorm, GELU MLP, CrossEntropy e AdamW. Il modello è realmente addestrato da PyTorch/autograd.</p><div class="mt-3 text-sm text-amber-200/80 border border-amber-500/20 bg-amber-500/5 rounded-xl p-3">È un vero Transformer LM, ma non diventa automaticamente un modello “large” come GPT: la scala dipende dai parametri, dai dati e dall'hardware disponibili.</div></div>
+  <div class="grid grid-cols-1 2xl:grid-cols-[360px_minmax(0,1fr)_410px] gap-4">
+    <div class="glass rounded-3xl p-5 h-fit"><h3 class="font-semibold mb-4">Architettura</h3><div class="space-y-3 text-sm">
+      <div class="grid grid-cols-2 gap-2"><div><label>d_model</label><input id="llmDModel" type="number" value="128" min="32" step="32" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Attention heads</label><input id="llmHeads" type="number" value="4" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+      <div class="grid grid-cols-2 gap-2"><div><label>Transformer blocks</label><input id="llmLayers" type="number" value="4" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Context length</label><input id="llmContext" type="number" value="64" min="16" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+      <div class="grid grid-cols-2 gap-2"><div><label>MLP ratio</label><input id="llmRatio" type="number" value="4" min="1" step="0.5" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Dropout</label><input id="llmDropout" type="number" value="0.1" min="0" max="0.9" step="0.05" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+      <div class="grid grid-cols-2 gap-2"><div><label>Optimizer</label><select id="llmOptimizer" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="adamw">AdamW</option><option value="adam">Adam</option><option value="sgd">SGD</option></select></div><div><label>Batch</label><input id="llmBatch" type="number" value="8" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+      <div class="grid grid-cols-2 gap-2"><div><label>Learning rate</label><input id="llmLr" type="number" value="0.0003" step="0.0001" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Weight decay</label><input id="llmWd" type="number" value="0.01" step="0.001" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+      <div class="grid grid-cols-2 gap-2"><div><label>Gradient clip</label><input id="llmClip" type="number" value="1.0" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Seed</label><input id="llmSeed" type="number" value="42" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+      <label class="flex gap-2 items-center"><input id="llmTie" type="checkbox" checked class="accent-purple-500">Tie token embedding ↔ lm_head</label>
+      <div><label>Realtime interval (ms)</label><input id="llmSpeed" type="number" value="80" min="20" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div>
+      <button id="torchCreateLlm" class="w-full rounded-xl bg-purple-600 px-3 py-2.5">Crea Transformer</button>
+      <div class="grid grid-cols-2 gap-2"><button id="llmTrainStepBtn" class="rounded-xl bg-blue-600 px-3 py-2.5">1 step</button><button id="llm20" class="rounded-xl bg-blue-600/70 px-3 py-2.5">20 step</button><button id="llmStart" class="rounded-xl bg-emerald-700 px-3 py-2.5">Realtime</button><button id="llmPause" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2.5">Pausa</button></div>
+    </div></div>
+    <div class="space-y-4">
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-2">Corpus di training</h3><textarea id="llmTrainingText" class="w-full h-[230px] rounded-2xl bg-slate-950/60 border border-slate-800 p-4 text-sm">L'intelligenza artificiale apprende regolarità statistiche dai dati. Un language model autoregressivo osserva una sequenza di token e impara a prevedere il token successivo. Durante il forward pass i token diventano embedding, attraversano self-attention causale e reti feed-forward. La cross entropy misura l'errore e la backpropagation calcola i gradienti. AdamW aggiorna i parametri. Ripetendo il processo il modello modifica le probabilità associate ai token successivi. Questo testo è ripetuto per fornire un piccolo corpus didattico. L'intelligenza artificiale apprende regolarità statistiche dai dati. Un language model autoregressivo osserva una sequenza di token e impara a prevedere il token successivo.</textarea></div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Cross-Entropy Loss</h3><div class="h-[300px]"><canvas id="torchLlmChart"></canvas></div></div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Generazione autoregressiva</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-2"><input id="llmPrompt" value="L'intelligenza " class="md:col-span-3 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><div><label class="small-label">New tokens</label><input id="llmGenTokens" type="number" value="80" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Temperature</label><input id="llmTemperature" type="number" value="0.8" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Top-k</label><input id="llmTopK" type="number" value="40" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div><button id="llmGenerate" class="mt-3 rounded-xl bg-purple-600 px-4 py-2.5">Genera</button><pre id="llmGenerated" class="scrollbar whitespace-pre-wrap mt-3 min-h-[110px] max-h-[260px] overflow-auto rounded-2xl bg-black/30 border border-slate-800 p-4 text-sm"></pre></div>
+    </div>
+    <div class="space-y-4"><div class="grid grid-cols-2 gap-3"><div class="metric rounded-2xl p-4"><div class="small-label">Step</div><div id="llmStepMetric" class="text-xl mt-1">0</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Parametri</div><div id="llmParams" class="text-xl mt-1 text-purple-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Loss</div><div id="llmLoss" class="text-xl mt-1 text-rose-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Perplexity</div><div id="llmPpl" class="text-xl mt-1 text-amber-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Token/s</div><div id="llmTokSec" class="text-xl mt-1 text-emerald-300">—</div></div><div class="metric rounded-2xl p-4"><div class="small-label">Device</div><div id="llmDeviceMetric" class="text-sm mt-2">—</div></div></div><div class="industrial-card rounded-3xl p-5"><h3 class="font-semibold">Pipeline reale</h3><div class="text-xs text-slate-400 mt-3 leading-7 font-mono">UTF-8 bytes → Embedding + Positional Embedding<br>→ LayerNorm → Q/K/V → Causal Multi-Head Attention<br>→ Residual → LayerNorm → GELU MLP → Residual<br>→ … N blocks … → LayerNorm → LM Head<br>→ Logits[256] → CrossEntropy → autograd.backward()<br>→ gradient clipping → AdamW.step()</div></div></div>
+  </div>
+</section>
+
+<!-- TORCH XRAY -->
+<section id="torchxray" class="section space-y-4">
+  <div class="glass rounded-3xl p-5"><div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3"><div><h2 class="text-xl font-semibold">Torch X-Ray</h2><p id="torchXraySummary" class="text-sm text-blue-300 mt-1">Crea un modello PyTorch per ispezionarlo.</p></div><button id="torchRefreshXray" class="rounded-xl bg-blue-600 px-4 py-2.5">Aggiorna snapshot</button></div></div>
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-4"><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">nn.Module Tree</h3><div id="torchModuleTree" class="scrollbar h-[480px] overflow-auto text-xs"></div></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Attention Head 0 · ultimo block</h3><div id="torchAttention" class="scrollbar h-[480px] overflow-auto"><div class="text-slate-500">Disponibile dopo un forward del Transformer.</div></div></div></div>
+  <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Tensor / Parameter Inspector</h3><div class="scrollbar overflow-auto max-h-[560px]"><table><thead><tr class="text-xs text-slate-500"><th>Tensor</th><th>Shape</th><th>Mean</th><th>Std</th><th>Max |grad|</th><th>Numel</th></tr></thead><tbody id="torchParamRows"></tbody></table></div></div>
+  <div class="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-4"><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Checkpoint .pt reale</h3><input id="checkpointName" value="experiment" class="w-full rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><div class="grid grid-cols-2 gap-2 mt-2"><button id="saveCheckpoint" class="rounded-xl bg-emerald-700 px-3 py-2.5">Salva</button><button id="refreshCheckpoints" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2.5">Aggiorna</button></div></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Checkpoint disponibili</h3><div id="checkpointList" class="space-y-2 text-sm"></div></div></div>
+</section>
+
+
+<!-- V4 ULTIMATE LLM STUDIO -->
+<section id="ultimate-llm" class="section space-y-4">
+  <div class="glass rounded-3xl p-5">
+    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3">
+      <div><h2 class="text-xl font-semibold">Ultimate LLM Studio V4.1</h2><p class="text-sm text-slate-400 mt-1">Decoder-only Transformer moderno: RMSNorm, RoPE, SwiGLU, GQA, SDPA, LoRA, warmup/cosine LR, gradient accumulation, checkpointing e training in background.</p></div>
+      <div class="flex gap-2 flex-wrap"><button id="v4HealthBtn" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2">Aggiorna sistema</button><span id="v4HealthBadge" class="pill rounded-xl px-3 py-2 text-sm text-amber-300">Backend V4.1…</span></div>
+    </div>
+    <div id="v4SystemCards" class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-3 mt-4"></div>
+  </div>
+
+  <div class="grid grid-cols-1 2xl:grid-cols-[390px_minmax(0,1fr)_420px] gap-4">
+    <div class="glass rounded-3xl p-5 h-fit">
+      <h3 class="font-semibold mb-4">Architettura e training</h3>
+      <div class="space-y-3 text-sm">
+        <div class="grid grid-cols-2 gap-2"><div><label>d_model</label><input id="v4DModel" type="number" value="192" min="32" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Layers</label><input id="v4Layers" type="number" value="6" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Attention heads</label><input id="v4Heads" type="number" value="6" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>KV heads (GQA)</label><input id="v4KvHeads" type="number" value="2" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Context</label><input id="v4Context" type="number" value="256" min="16" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>MLP ratio</label><input id="v4Ratio" type="number" value="4" min="1" step="0.5" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Dropout</label><input id="v4Dropout" type="number" value="0.05" min="0" max="0.9" step="0.01" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>RoPE θ</label><input id="v4Rope" type="number" value="10000" min="100" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Tokenizer</label><select id="v4Tokenizer" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="byte">Byte UTF-8</option><option value="bpe">Trainable Byte-BPE</option></select></div><div><label>BPE vocab</label><input id="v4BpeVocab" type="number" value="384" min="256" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>LoRA rank</label><input id="v4LoraRank" type="number" value="0" min="0" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>LoRA alpha</label><input id="v4LoraAlpha" type="number" value="16" min="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><label class="pill rounded-xl p-3 flex gap-2 items-center"><input id="v4FreezeBase" type="checkbox" class="accent-purple-500">Freeze base con LoRA</label><label class="pill rounded-xl p-3 flex gap-2 items-center"><input id="v4GradCkpt" type="checkbox" class="accent-blue-500">Gradient checkpointing</label></div>
+        <div class="grid grid-cols-2 gap-2"><label class="pill rounded-xl p-3 flex gap-2 items-center"><input id="v4Sdpa" type="checkbox" checked class="accent-emerald-500">PyTorch SDPA</label><label class="pill rounded-xl p-3 flex gap-2 items-center"><input id="v4Compile" type="checkbox" class="accent-amber-500">torch.compile</label></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Optimizer</label><select id="v4Optimizer" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="adamw">AdamW</option><option value="adam">Adam</option><option value="sgd">SGD</option></select></div><div><label>AMP dtype</label><select id="v4Amp" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="auto">Auto</option><option value="bf16">bfloat16</option><option value="fp16">float16</option><option value="none">FP32</option></select></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>LR</label><input id="v4Lr" type="number" value="0.0003" step="0.00001" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Min LR</label><input id="v4MinLr" type="number" value="0.00003" step="0.00001" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Warmup steps</label><input id="v4Warmup" type="number" value="20" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>LR decay steps</label><input id="v4Decay" type="number" value="2000" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Weight decay</label><input id="v4Wd" type="number" value="0.1" step="0.01" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Grad clip</label><input id="v4Clip" type="number" value="1" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Grad accumulation</label><input id="v4Accum" type="number" value="1" min="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Seed</label><input id="v4Seed" type="number" value="42" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <div class="grid grid-cols-2 gap-2"><div><label>Device</label><select id="v4Device" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="auto">Auto</option><option value="cpu">CPU</option><option value="cuda">CUDA</option></select></div><div><label>Validation %</label><input id="v4ValPct" type="number" value="10" min="0" max="45" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div>
+        <button id="v4CreateBtn" class="w-full rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-3 font-medium">Crea Modern Transformer</button>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-2">Corpus</h3><textarea id="v4Corpus" class="w-full h-[240px] rounded-2xl bg-slate-950/60 border border-slate-800 p-4 text-sm">AI Model Lab V4 è un laboratorio per capire e sperimentare reti neurali e language model. Un Transformer autoregressivo trasforma token in embedding, applica normalizzazione, self-attention causale, connessioni residuali e reti feed-forward. I gradienti vengono calcolati con autograd e l'ottimizzatore modifica i parametri. Questa frase viene ripetuta per creare un piccolo corpus di laboratorio. AI Model Lab V4 è un laboratorio per capire e sperimentare reti neurali e language model. Un Transformer autoregressivo trasforma token in embedding, applica normalizzazione, self-attention causale, connessioni residuali e reti feed-forward.</textarea></div>
+      <div class="glass rounded-3xl p-5"><div class="flex justify-between gap-3 mb-3"><div><h3 class="font-semibold">Training Job non bloccante</h3><p class="text-xs text-slate-500">Il backend allena in un thread separato e la UI interroga lo stato.</p></div><span id="v4JobBadge" class="pill rounded-xl px-3 py-2 text-xs">idle</span></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2"><div><label class="small-label">Steps</label><input id="v4JobSteps" type="number" value="200" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Batch</label><input id="v4Batch" type="number" value="8" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Eval ogni</label><input id="v4Eval" type="number" value="20" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div class="flex items-end"><button id="v4StepBtn" class="w-full rounded-xl bg-blue-600 px-3 py-2.5">1 step</button></div></div><div class="grid grid-cols-2 gap-2 mt-2"><button id="v4StartJobBtn" class="rounded-xl bg-emerald-700 px-3 py-2.5">Avvia Job</button><button id="v4StopJobBtn" class="rounded-xl bg-rose-700/80 px-3 py-2.5">Stop Job</button></div><div class="h-2 rounded-full bg-slate-800 mt-3 overflow-hidden"><div id="v4Progress" class="h-full bg-emerald-500 transition-all" style="width:0%"></div></div></div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Train / Validation Loss</h3><div class="h-[310px]"><canvas id="v4LossChart"></canvas></div></div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Tokenizer & Embedding Microscope</h3><div class="flex gap-2"><input id="v4TokenText" value="Transformer attention modello" class="min-w-0 flex-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><button id="v4TokenBtn" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2">Tokenizza</button><button id="v4EmbedBtn" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2">Embedding</button></div><div id="v4TokenPreview" class="scrollbar overflow-auto mt-3"></div><div id="v4EmbeddingMatrix" class="scrollbar overflow-auto mt-3"></div></div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="metric rounded-2xl p-4"><div class="small-label">Step</div><div id="v4StepMetric" class="text-xl mt-1">0</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Parametri</div><div id="v4ParamMetric" class="text-xl mt-1 text-purple-300">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Trainable</div><div id="v4TrainableMetric" class="text-xl mt-1 text-blue-300">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Train Loss</div><div id="v4TrainLossMetric" class="text-xl mt-1 text-rose-300">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Val Loss</div><div id="v4ValLossMetric" class="text-xl mt-1 text-amber-300">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Tokens/s</div><div id="v4TokSecMetric" class="text-xl mt-1 text-emerald-300">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">LR</div><div id="v4LrMetric" class="text-lg mt-1">—</div></div>
+        <div class="metric rounded-2xl p-4"><div class="small-label">Gradient L2</div><div id="v4GradMetric" class="text-lg mt-1">—</div></div>
+      </div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Generazione</h3><textarea id="v4Prompt" class="w-full h-20 rounded-xl bg-slate-950/70 border border-slate-700 p-3">AI Model Lab </textarea><div class="grid grid-cols-2 gap-2 mt-2"><div><label class="small-label">New tokens</label><input id="v4GenTokens" type="number" value="120" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Temperature</label><input id="v4Temp" type="number" value="0.8" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Top-k</label><input id="v4TopK" type="number" value="50" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label class="small-label">Top-p</label><input id="v4TopP" type="number" value="0.95" step="0.05" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div class="col-span-2"><label class="small-label">Repetition penalty</label><input id="v4Rep" type="number" value="1.05" step="0.05" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div><button id="v4GenerateBtn" class="w-full mt-3 rounded-xl bg-purple-600 px-3 py-2.5">Genera autoregressivamente</button><pre id="v4Generated" class="scrollbar whitespace-pre-wrap min-h-[150px] max-h-[300px] overflow-auto mt-3 rounded-2xl bg-black/30 border border-slate-800 p-4 text-sm"></pre></div>
+      <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Checkpoint / Experiment</h3><input id="v4SaveName" value="ultimate_experiment" class="w-full rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><textarea id="v4Notes" class="w-full h-20 mt-2 rounded-xl bg-slate-950/70 border border-slate-700 p-3 text-sm" placeholder="Note esperimento"></textarea><div class="grid grid-cols-2 gap-2 mt-2"><button id="v4CheckpointBtn" class="rounded-xl bg-emerald-700 px-3 py-2.5">Checkpoint .pt</button><button id="v4ExperimentBtn" class="rounded-xl bg-blue-700 px-3 py-2.5">Salva esperimento</button></div><div id="v4EventLog" class="scrollbar h-[190px] overflow-auto mt-3 rounded-xl bg-black/30 border border-slate-800 p-3 text-xs font-mono leading-6"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- V4 AUTOGRAD MICROSCOPE -->
+<section id="autograd-v4" class="section space-y-4">
+  <div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Autograd Microscope</h2><p class="text-sm text-slate-400 mt-1">Un piccolo motore reverse-mode nel browser per vedere value, derivata locale e gradiente globale nodo per nodo. È il ponte tra la formula del neurone e torch.autograd.</p></div>
+  <div class="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-4">
+    <div class="glass rounded-3xl p-5 h-fit"><div class="space-y-3"><div><label>x</label><input id="agX" type="number" value="2" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>w</label><input id="agW" type="number" value="-1.5" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>b</label><input id="agB" type="number" value="0.5" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>target</label><input id="agTarget" type="number" value="1" step="0.1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><button id="agForwardBtn" class="w-full rounded-xl bg-blue-600 px-3 py-2.5">Costruisci Forward Graph</button><button id="agBackwardBtn" class="w-full rounded-xl bg-purple-600 px-3 py-2.5">Backward()</button><button id="agUpdateBtn" class="w-full rounded-xl bg-emerald-700 px-3 py-2.5">Gradient Descent Update</button><div><label>Learning rate</label><input id="agLr" type="number" value="0.1" step="0.01" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div></div>
+    <div class="space-y-4"><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Computational DAG</h3><div id="agGraph" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Backprop order</h3><div id="agTrace" class="scrollbar max-h-[300px] overflow-auto text-xs font-mono leading-7"></div></div></div>
+  </div>
+</section>
+
+<!-- V4 SCALE LAB -->
+<section id="scale-v4" class="section space-y-4">
+  <div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Scale & Memory Lab</h2><p class="text-sm text-slate-400 mt-1">Progetta un decoder da migliaia a miliardi di parametri senza allocarlo realmente. Le stime di memoria e FLOPs sono dichiaratamente approssimative.</p></div>
+  <div class="grid grid-cols-1 xl:grid-cols-[390px_minmax(0,1fr)] gap-4">
+    <div class="glass rounded-3xl p-5 h-fit"><div class="space-y-3 text-sm"><div><label>Preset</label><select id="scalePreset" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="custom">Custom</option><option value="tiny">Tiny ~10M</option><option value="small">Small ~100M</option><option value="medium">Medium ~1B</option><option value="large">Large multi-B</option></select></div><div class="grid grid-cols-2 gap-2"><div><label>Vocab</label><input id="scaleVocab" type="number" value="32000" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>d_model</label><input id="scaleD" type="number" value="1024" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div><div class="grid grid-cols-2 gap-2"><div><label>Heads</label><input id="scaleHeads" type="number" value="16" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>KV heads</label><input id="scaleKv" type="number" value="4" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div><div class="grid grid-cols-2 gap-2"><div><label>Layers</label><input id="scaleLayers" type="number" value="24" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Context</label><input id="scaleContext" type="number" value="4096" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div><div class="grid grid-cols-2 gap-2"><div><label>MLP ratio</label><input id="scaleRatio" type="number" value="4" step="0.5" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div><div><label>Batch</label><input id="scaleBatch" type="number" value="1" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"></div></div><div class="grid grid-cols-2 gap-2"><div><label>Precision bytes</label><select id="scalePrecision" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="2">2 (FP16/BF16)</option><option value="4">4 (FP32)</option><option value="1">1 (INT8 rough)</option></select></div><div><label>Optimizer</label><select id="scaleOptimizer" class="w-full mt-1 rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><option value="adamw">AdamW</option><option value="sgd">SGD</option><option value="none">Inference only</option></select></div></div><button id="scaleCalcBtn" class="w-full rounded-xl bg-blue-600 px-3 py-2.5">Calcola scala</button></div></div>
+    <div class="space-y-4"><div id="scaleCards" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3"></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Breakdown</h3><div id="scaleBreakdown" class="space-y-2 text-sm"></div></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Cosa significa</h3><div id="scaleNotes" class="text-sm text-slate-400 leading-7"></div></div></div>
+  </div>
+</section>
+
+<!-- V4 EXPERIMENT TRACKER -->
+<section id="experiments-v4" class="section space-y-4">
+  <div class="glass rounded-3xl p-5"><div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3"><div><h2 class="text-xl font-semibold">Experiment Tracker</h2><p class="text-sm text-slate-400 mt-1">Registro SQLite locale di configurazioni, metriche, note e risultati.</p></div><button id="expRefreshBtn" class="rounded-xl bg-blue-600 px-4 py-2.5">Aggiorna</button></div></div>
+  <div class="glass rounded-3xl p-5"><div id="expRows" class="scrollbar overflow-auto"></div></div>
+</section>
+
+<!-- DOCUMENTATION -->
+<section id="docs" class="section space-y-4"><div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Documentazione integrata</h2><p class="text-sm text-slate-400 mt-1">La guida completa è inclusa nella cartella docs in Markdown e Word.</p></div><div class="grid grid-cols-1 xl:grid-cols-2 gap-4"><div class="glass rounded-3xl p-5"><h3 class="font-semibold text-blue-300">Neurone</h3><p class="text-sm text-slate-400 mt-2">z = Σ(xᵢwᵢ)+b; poi a = activation(z).</p></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold text-purple-300">Training</h3><p class="text-sm text-slate-400 mt-2">Forward → Loss → Backpropagation → Optimizer Update.</p></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold text-emerald-300">Generalizzazione</h3><p class="text-sm text-slate-400 mt-2">Confronta sempre Train, Validation e Test: una train loss bassa non basta.</p></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold text-amber-300">Diagnostica</h3><p class="text-sm text-slate-400 mt-2">Osserva gradient flow, dead ReLU, generalization gap e parameter delta.</p></div></div></section>
+
+<!-- TRANSFORMER -->
+<section id="transformer" class="section">
+<div class="glass rounded-3xl p-5"><h2 class="text-xl font-semibold">Mini Transformer / Self-Attention</h2><p class="text-sm text-slate-400 mt-1">Questa sezione mostra token, embedding e una self-attention didattica Q·Kᵀ → softmax → V.</p>
+<textarea id="attentionText" class="w-full h-24 mt-4 rounded-2xl bg-slate-950/60 border border-slate-800 p-4">il modello impara quali parole sono importanti nel contesto</textarea>
+<button id="attentionRunBtn" class="mt-3 rounded-xl bg-blue-600 px-4 py-2.5">Calcola Attention</button>
+<div id="tokenView" class="flex flex-wrap gap-2 mt-5"></div><div id="attentionHeatmap" class="scrollbar overflow-auto mt-5"></div><p id="attentionExplain" class="text-sm text-slate-400 mt-4"></p>
+</div>
+</section>
+
+</div>
+</div>
+</div>
+
+<script src="js/ui-runtime.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/datasets.js"></script>
+<script src="js/visualizer.js"></script>
+<script src="js/transformer.js"></script>
+<script src="js/app.js"></script>
+<script src="js/advanced.js"></script>
+<script src="js/industrial.js"></script>
+<script src="js/ultimate.js"></script>
+</body></html>
