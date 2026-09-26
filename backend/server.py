@@ -33,8 +33,8 @@ class SafeJSONResponse(JSONResponse):
 
 
 app = FastAPI(
-    title='AI Model Lab V4.1.2 — Ultimate Dual Engine Backend',
-    version='4.1.2',
+    title='AI Model Lab V4.1.3 — Ultimate Dual Engine Backend',
+    version='4.1.3',
     default_response_class=SafeJSONResponse,
 )
 
@@ -116,7 +116,7 @@ def health():
     device_name = torch.cuda.get_device_name(0) if cuda else 'CPU'
     return {
         'ok': True,
-        'app_version': '4.1.2',
+        'app_version': '4.1.3',
         'project_root': str(ROOT),
         'pytorch': torch.__version__,
         'cuda_available': cuda,
@@ -222,8 +222,10 @@ def save_checkpoint(req: CheckpointRequest):
         'kind': current_kind,
         'config': trainer.config.model_dump(),
         'step': trainer.step,
+        'last': trainer.last,
         'model_state': trainer.model.state_dict(),
         'optimizer_state': trainer.optimizer.state_dict(),
+        'scaler_state': trainer.scaler.state_dict(),
     }
     torch.save(payload, path)
     return {'ok': True, 'filename': filename, 'size_bytes': path.stat().st_size}
@@ -257,7 +259,10 @@ def load_checkpoint(req: CheckpointLoadRequest):
             raise HTTPException(400, 'Tipo checkpoint non valido')
         trainer.model.load_state_dict(payload['model_state'])
         trainer.optimizer.load_state_dict(payload['optimizer_state'])
+        if payload.get('scaler_state'):
+            trainer.scaler.load_state_dict(payload['scaler_state'])
         trainer.step = int(payload.get('step', 0))
+        trainer.last = payload.get('last', {})
         current_kind = kind
         return trainer.state()
 
