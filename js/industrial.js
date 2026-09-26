@@ -70,7 +70,7 @@ window.AIML = window.AIML || {};
       $('advThreads').textContent = h.cpu_threads;
       $('engineModeBadge').textContent = S.mode === 'advanced' ? `PyTorch ${h.pytorch}` : 'MLP didattico';
       const hint=$('advancedBackendHint');
-      if(hint){hint.className='mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-100/80';hint.innerHTML=`✓ Backend Ultimate V4 attivo. PyTorch <b>${h.pytorch}</b> · ${h.cuda_available?`CUDA ${h.cuda_version||''} · ${h.device_name}`:'CPU'}. Non avviare START_ADVANCED_PYTORCH.bat separatamente.`;}
+      if(hint){hint.className='mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-100/80';hint.innerHTML=`✓ Backend Ultimate V4.1 online. PyTorch <b>${h.pytorch}</b> · ${h.cuda_available?`CUDA ${h.cuda_version||''} · ${h.device_name}`:'CPU'}. Pronto per Framework Pro.`;}
       return true;
     } catch (err) {
       S.backend = null;
