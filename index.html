@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-<link rel="stylesheet" href="styles.css?v=4.1.2">
+<link rel="stylesheet" href="styles.css?v=4.1.3">
 </head>
 <body>
 <div class="min-h-screen p-3 lg:p-5">
@@ -16,11 +16,11 @@
 <aside class="glass rounded-3xl p-4 lg:sticky lg:top-5 lg:h-[calc(100vh-40px)] overflow-y-auto scrollbar">
   <div class="flex items-center gap-3 mb-5">
     <div class="w-11 h-11 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center"><i class="fa-solid fa-brain text-blue-300"></i></div>
-    <div><div class="font-semibold">AI Model Lab</div><div class="text-[11px] text-slate-500">Neural X-Ray Studio · V4.1.2 Professional</div></div>
+    <div><div class="font-semibold">AI Model Lab</div><div class="text-[11px] text-slate-500">Neural X-Ray Studio · V4.1.3 Professional</div></div>
   </div>
   <div class="mode-switch mb-4">
     <button id="modeDidacticBtn" class="mode-active flex-1"><i class="fa-solid fa-graduation-cap mr-1"></i>Didattica</button>
-    <button id="modeAdvancedBtn" class="flex-1"><i class="fa-brands fa-python mr-1"></i>Framework Pro V4.1.2</button>
+    <button id="modeAdvancedBtn" class="flex-1"><i class="fa-brands fa-python mr-1"></i>Framework Pro V4.1.3</button>
   </div>
   <nav class="space-y-1">
     <button class="nav-btn active" data-section="dashboard" data-title="Dashboard"><i class="fa-solid fa-gauge w-6"></i>Dashboard</button>
@@ -65,12 +65,12 @@
 </header>
 
 <section class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
-  <div class="metric rounded-2xl p-3"><div class="small-label">Epoca</div><div id="epochMetric" class="text-xl mt-1 font-semibold">0</div></div>
-  <div class="metric rounded-2xl p-3"><div class="small-label">Loss</div><div id="lossMetric" class="text-xl mt-1 font-semibold text-rose-300">—</div></div>
-  <div class="metric rounded-2xl p-3"><div class="small-label">Parametri</div><div id="paramMetric" class="text-xl mt-1 font-semibold text-purple-300">—</div></div>
-  <div class="metric rounded-2xl p-3"><div class="small-label">Architettura</div><div id="archMetric" class="text-lg mt-1 font-semibold text-blue-300">—</div></div>
-  <div class="metric rounded-2xl p-3"><div class="small-label">Learning Rate</div><div id="lrMetric" class="text-xl mt-1 font-semibold">0.03</div></div>
-  <div class="metric rounded-2xl p-3"><div class="small-label">Fase</div><div id="phaseMetric" class="text-sm mt-2 font-semibold text-emerald-300">idle</div></div>
+  <div class="metric rounded-2xl p-3"><div id="epochMetricLabel" class="small-label">Epoca</div><div id="epochMetric" class="text-xl mt-1 font-semibold">0</div></div>
+  <div class="metric rounded-2xl p-3"><div id="lossMetricLabel" class="small-label">Loss</div><div id="lossMetric" class="text-xl mt-1 font-semibold text-rose-300">—</div></div>
+  <div class="metric rounded-2xl p-3"><div id="paramMetricLabel" class="small-label">Parametri</div><div id="paramMetric" class="text-xl mt-1 font-semibold text-purple-300">—</div></div>
+  <div class="metric rounded-2xl p-3"><div id="archMetricLabel" class="small-label">Architettura</div><div id="archMetric" class="text-lg mt-1 font-semibold text-blue-300">—</div></div>
+  <div class="metric rounded-2xl p-3"><div id="lrMetricLabel" class="small-label">Learning Rate</div><div id="lrMetric" class="text-xl mt-1 font-semibold">0.03</div></div>
+  <div class="metric rounded-2xl p-3"><div id="phaseMetricLabel" class="small-label">Fase</div><div id="phaseMetric" class="text-sm mt-2 font-semibold text-emerald-300">idle</div></div>
 </section>
 
 <!-- DASHBOARD -->
@@ -289,7 +289,7 @@
 <!-- TORCH XRAY -->
 <section id="torchxray" class="section space-y-4">
   <div class="glass rounded-3xl p-5"><div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-3"><div><h2 class="text-xl font-semibold">Torch X-Ray</h2><p id="torchXraySummary" class="text-sm text-blue-300 mt-1">Crea un modello PyTorch per ispezionarlo.</p></div><button id="torchRefreshXray" class="rounded-xl bg-blue-600 px-4 py-2.5">Aggiorna snapshot</button></div></div>
-  <div class="grid grid-cols-1 xl:grid-cols-2 gap-4"><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">nn.Module Tree</h3><div id="torchModuleTree" class="scrollbar h-[480px] overflow-auto text-xs"></div></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Attention Head 0 · ultimo block</h3><div id="torchAttention" class="scrollbar h-[480px] overflow-auto"><div class="text-slate-500">Disponibile dopo un forward del Transformer.</div></div></div></div>
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-4"><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">nn.Module Tree</h3><div id="torchModuleTree" class="scrollbar h-[480px] overflow-auto text-xs"></div></div><div class="glass rounded-3xl p-5"><h3 id="torchAttentionTitle" class="font-semibold mb-3">Attention Head 0 · ultimo block</h3><div id="torchAttention" class="scrollbar h-[480px] overflow-auto"><div class="text-slate-500">Disponibile dopo un forward del Transformer.</div></div></div></div>
   <div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Tensor / Parameter Inspector</h3><div class="scrollbar overflow-auto max-h-[560px]"><table><thead><tr class="text-xs text-slate-500"><th>Tensor</th><th>Shape</th><th>Mean</th><th>Std</th><th>Max |grad|</th><th>Numel</th></tr></thead><tbody id="torchParamRows"></tbody></table></div></div>
   <div class="grid grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)] gap-4"><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Checkpoint .pt reale</h3><input id="checkpointName" value="experiment" class="w-full rounded-xl bg-slate-950/70 border border-slate-700 px-3 py-2"><div class="grid grid-cols-2 gap-2 mt-2"><button id="saveCheckpoint" class="rounded-xl bg-emerald-700 px-3 py-2.5">Salva</button><button id="refreshCheckpoints" class="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2.5">Aggiorna</button></div></div><div class="glass rounded-3xl p-5"><h3 class="font-semibold mb-3">Checkpoint disponibili</h3><div id="checkpointList" class="space-y-2 text-sm"></div></div></div>
 </section>
@@ -391,13 +391,13 @@
 </div>
 </div>
 
-<script src="js/ui-runtime.js?v=4.1.2"></script>
-<script src="js/engine.js?v=4.1.2"></script>
-<script src="js/datasets.js?v=4.1.2"></script>
-<script src="js/visualizer.js?v=4.1.2"></script>
-<script src="js/transformer.js?v=4.1.2"></script>
-<script src="js/app.js?v=4.1.2"></script>
-<script src="js/advanced.js?v=4.1.2"></script>
-<script src="js/industrial.js?v=4.1.2"></script>
-<script src="js/ultimate.js?v=4.1.2"></script>
+<script src="js/ui-runtime.js?v=4.1.3"></script>
+<script src="js/engine.js?v=4.1.3"></script>
+<script src="js/datasets.js?v=4.1.3"></script>
+<script src="js/visualizer.js?v=4.1.3"></script>
+<script src="js/transformer.js?v=4.1.3"></script>
+<script src="js/app.js?v=4.1.3"></script>
+<script src="js/advanced.js?v=4.1.3"></script>
+<script src="js/industrial.js?v=4.1.3"></script>
+<script src="js/ultimate.js?v=4.1.3"></script>
 </body></html>
