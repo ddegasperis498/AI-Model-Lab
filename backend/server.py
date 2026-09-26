@@ -116,6 +116,8 @@ def health():
     device_name = torch.cuda.get_device_name(0) if cuda else 'CPU'
     return {
         'ok': True,
+        'app_version': '4.1.1',
+        'project_root': str(ROOT),
         'pytorch': torch.__version__,
         'cuda_available': cuda,
         'cuda_version': torch.version.cuda,
