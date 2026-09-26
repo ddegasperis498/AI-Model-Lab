@@ -2,11 +2,11 @@
 setlocal EnableExtensions
 cd /d "%~dp0"
 
-set "EXPECTED_VERSION=4.1.3"
+set "EXPECTED_VERSION=4.2.0"
 set "PORT=8765"
 
 echo ==============================================================
-echo AI Model Lab V4.1.3 - Ultimate Framework
+echo AI Model Lab V4.2.0 - Ultimate Framework
 echo ==============================================================
 echo Backend: http://127.0.0.1:%PORT%
 echo API docs: http://127.0.0.1:%PORT%/docs
@@ -37,7 +37,7 @@ if "%HEALTH_OK%"=="0" (
   if defined RUNNING_VERSION (
     echo Versione attiva: %RUNNING_VERSION%
   ) else (
-    echo Versione attiva: precedente alla V4.1.3
+    echo Versione attiva: precedente alla V4.2.0
   )
   if defined RUNNING_ROOT echo Root attiva: %RUNNING_ROOT%
   echo Versione richiesta: %EXPECTED_VERSION%
