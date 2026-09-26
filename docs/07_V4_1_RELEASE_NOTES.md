@@ -39,3 +39,16 @@ Ultimate V4.1 è l'unico backend necessario per Framework Pro e V4 Ultimate. Lo 
 - Lo stato Realtime/Pausa viene sincronizzato con il Framework Pro.
 - I checkpoint salvano e ripristinano anche lo stato AMP GradScaler e le ultime metriche, oltre a modello, optimizer, configurazione e step.
 - Versione frontend/backend allineata a V4.1.3.
+
+
+## V4.2.0 — Transformer Validation Lab
+
+- Aggiunto split Train/Validation configurabile (10–40%, default 20%).
+- Il Transformer addestra solo sul train split e valuta separatamente il validation split senza aggiornare i pesi.
+- Aggiunte Train Loss, Validation Loss, Train/Validation Perplexity, Generalization Gap e diagnosi euristica: Warm-up / Learning / Stable / Underfitting / Overfitting.
+- Grafico Cross-Entropy a due curve: training e validation.
+- Generazione autoregressiva riproducibile tramite Generation Seed.
+- Aggiunto Reset seed = 42.
+- Checkpoint LLM estesi con history train/validation, validation fraction, ultime metriche e stato AMP.
+- Aggiunti regression test per validation split, metriche finite, generazione deterministica e resume checkpoint.
+- Versione frontend/backend allineata a V4.2.0.
