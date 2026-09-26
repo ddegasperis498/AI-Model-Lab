@@ -54,12 +54,14 @@ class LLMTrainRequest(BaseModel):
     text: str = Field(min_length=32)
     batch_size: int = Field(8, ge=1, le=512)
     steps: int = Field(1, ge=1, le=500)
+    validation_fraction: float = Field(0.20, ge=0.05, le=0.40)
 
 class LLMGenerateRequest(BaseModel):
     prompt: str = ''
     max_new_tokens: int = Field(80, ge=1, le=2048)
     temperature: float = Field(0.8, gt=0.0, le=5.0)
     top_k: int = Field(40, ge=0, le=256)
+    seed: int = 42
 
 class CheckpointRequest(BaseModel):
     name: str = Field('checkpoint', min_length=1, max_length=80)
