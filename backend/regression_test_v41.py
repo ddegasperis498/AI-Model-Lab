@@ -4,7 +4,7 @@ import math
 from fastapi.testclient import TestClient
 
 from backend.safe_json import sanitize_for_json
-from backend.server import app
+from backend.server import app, CHECKPOINTS
 
 
 def assert_json_finite(value):
@@ -68,6 +68,26 @@ assert payload50['step'] == 51
 assert_json_finite(payload50)
 assert len(payload50.get('loss_curve', [])) == 50
 
+# Checkpoint regression: a resume must restore the step counter and the
+# last visible metrics together with model/optimizer/scaler state.
+saved_loss = payload50['last']['loss']
+save = client.post('/api/advanced/checkpoint/save', json={'name': 'regression_v413_resume'})
+assert save.status_code == 200, save.text
+checkpoint_name = save.json()['filename']
+
+advance = client.post('/api/advanced/mlp/train', json={'data': samples, 'batch_size': 32, 'steps': 1})
+assert advance.status_code == 200, advance.text
+assert advance.json()['step'] == 52
+
+loaded = client.post('/api/advanced/checkpoint/load', json={'filename': checkpoint_name})
+assert loaded.status_code == 200, loaded.text
+loaded_payload = loaded.json()
+assert loaded_payload['step'] == 51
+assert loaded_payload['last']['loss'] == saved_loss
+assert_json_finite(loaded_payload)
+checkpoint_path = CHECKPOINTS / checkpoint_name
+if checkpoint_path.exists():
+    checkpoint_path.unlink()
 
 # CUDA/AMP regression: reproduce the exact sequence that previously left
 # GradScaler in UNSCALED state (1 step request followed by a 50-step request).
