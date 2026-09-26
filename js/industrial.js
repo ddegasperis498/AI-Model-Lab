@@ -49,6 +49,53 @@ window.AIML = window.AIML || {};
     while (el.children.length > 160) el.firstChild.remove();
   }
 
+  function setTopMetricLabels(advanced) {
+    const labels = advanced
+      ? {epoch:'Step', loss:'Loss', params:'Parametri', arch:'Architettura', lr:'Learning Rate', phase:'Device'}
+      : {epoch:'Epoca', loss:'Loss', params:'Parametri', arch:'Architettura', lr:'Learning Rate', phase:'Fase'};
+    if ($('epochMetricLabel')) $('epochMetricLabel').textContent = labels.epoch;
+    if ($('lossMetricLabel')) $('lossMetricLabel').textContent = labels.loss;
+    if ($('paramMetricLabel')) $('paramMetricLabel').textContent = labels.params;
+    if ($('archMetricLabel')) $('archMetricLabel').textContent = labels.arch;
+    if ($('lrMetricLabel')) $('lrMetricLabel').textContent = labels.lr;
+    if ($('phaseMetricLabel')) $('phaseMetricLabel').textContent = labels.phase;
+  }
+
+  function advancedArchitecture(st) {
+    const cfg = st?.config || {};
+    if (st?.kind === 'mlp') {
+      return [cfg.input_size, ...(cfg.hidden_sizes || []), cfg.output_size]
+        .filter(v => v !== undefined && v !== null).join('→') || '—';
+    }
+    if (st?.kind === 'transformer_lm') {
+      return `${cfg.n_layers ?? '—'}L · d${cfg.d_model ?? '—'} · h${cfg.n_heads ?? '—'}`;
+    }
+    return '—';
+  }
+
+  function resetAdvancedTopMetrics() {
+    setTopMetricLabels(true);
+    if ($('epochMetric')) $('epochMetric').textContent = '0';
+    if ($('lossMetric')) $('lossMetric').textContent = '—';
+    if ($('paramMetric')) $('paramMetric').textContent = '—';
+    if ($('archMetric')) $('archMetric').textContent = '—';
+    if ($('lrMetric')) $('lrMetric').textContent = '—';
+    if ($('phaseMetric')) $('phaseMetric').textContent = S.backend?.cuda_available ? 'cuda' : (S.backend ? 'cpu' : '—');
+    if ($('runState')) $('runState').textContent = 'Pronto';
+  }
+
+  function renderAdvancedTopMetrics(st, status='Pronto') {
+    if (!st || S.mode !== 'advanced') return;
+    setTopMetricLabels(true);
+    if ($('epochMetric')) $('epochMetric').textContent = st.step ?? 0;
+    if ($('lossMetric')) $('lossMetric').textContent = fmt(st.last?.loss, 7);
+    if ($('paramMetric')) $('paramMetric').textContent = Number(st.params?.total || 0).toLocaleString('it-IT');
+    if ($('archMetric')) $('archMetric').textContent = advancedArchitecture(st);
+    if ($('lrMetric')) $('lrMetric').textContent = st.config?.lr != null ? String(st.config.lr) : '—';
+    if ($('phaseMetric')) $('phaseMetric').textContent = st.device || '—';
+    if ($('runState')) $('runState').textContent = status;
+  }
+
   async function health({interactive=false}={}) {
     try {
       const h = await api('/api/advanced/health', {}, {
@@ -71,6 +118,7 @@ window.AIML = window.AIML || {};
       $('engineModeBadge').textContent = S.mode === 'advanced' ? `PyTorch ${h.pytorch}` : 'MLP didattico';
       const hint=$('advancedBackendHint');
       if(hint){hint.className='mt-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-100/80';hint.innerHTML=`✓ Backend Ultimate V4.1.2 online. PyTorch <b>${h.pytorch}</b> · ${h.cuda_available?`CUDA ${h.cuda_version||''} · ${h.device_name}`:'CPU'}. Pronto per Framework Pro.`;}
+      if (S.mode === 'advanced' && !S.currentState) resetAdvancedTopMetrics();
       return true;
     } catch (err) {
       S.backend = null;
@@ -107,11 +155,16 @@ window.AIML = window.AIML || {};
     if (mode === 'advanced') {
       A.appAPI?.pause?.();
       A.appAPI?.nav?.('pytorch');
+      setTopMetricLabels(true);
+      if (S.currentState) renderAdvancedTopMetrics(S.currentState, 'Pronto');
+      else resetAdvancedTopMetrics();
       health();
       $('engineModeBadge').textContent = S.backend ? `PyTorch ${S.backend.pytorch}` : 'PyTorch Advanced';
     } else {
       pauseMLP(); pauseLLM();
+      setTopMetricLabels(false);
       A.appAPI?.nav?.('dashboard');
+      A.appAPI?.refreshAll?.();
       $('engineModeBadge').textContent = 'MLP didattico';
     }
   }
@@ -202,8 +255,8 @@ window.AIML = window.AIML || {};
     } catch(err){ pauseMLP(); logAdvanced(`✕ Training fallito · ${err.message}`,'error'); localError(err,'Training MLP PyTorch',()=>trainMLP(steps)); return null; }
   }
 
-  function startMLP(){ if(S.mlpRunning)return;S.mlpRunning=true;A.UI.setLive(true,'MLP live · avvio…');const run=async()=>{if(!S.mlpRunning)return;const result=await trainMLP(1,{realtime:true});if(!result){pauseMLP();return;}S.mlpTimer=setTimeout(run,Math.max(40,parseInt($('torchMlpSpeed').value)||180));};run(); }
-  function pauseMLP(){S.mlpRunning=false;if(S.mlpTimer)clearTimeout(S.mlpTimer);S.mlpTimer=null;A.UI.setLive(false);}
+  function startMLP(){ if(S.mlpRunning)return;S.mlpRunning=true;if($('runState'))$('runState').textContent='Realtime';A.UI.setLive(true,'MLP live · avvio…');const run=async()=>{if(!S.mlpRunning)return;const result=await trainMLP(1,{realtime:true});if(!result){pauseMLP();return;}S.mlpTimer=setTimeout(run,Math.max(40,parseInt($('torchMlpSpeed').value)||180));};run(); }
+  function pauseMLP(){S.mlpRunning=false;if(S.mlpTimer)clearTimeout(S.mlpTimer);S.mlpTimer=null;A.UI.setLive(false);if(S.mode==='advanced'&&$('runState'))$('runState').textContent='Pausa';}
 
 
   function llmConfig() {
@@ -238,8 +291,8 @@ window.AIML = window.AIML || {};
     } catch(err){pauseLLM();logAdvanced(`✕ Transformer training: ${err.message}`,'error');localError(err,'Training Transformer LM',()=>trainLLM(steps));return null;}
   }
 
-  function startLLM(){if(S.llmRunning)return;S.llmRunning=true;A.UI.setLive(true,'Transformer live · avvio…');const run=async()=>{if(!S.llmRunning)return;const result=await trainLLM(1,{realtime:true});if(!result){pauseLLM();return;}S.llmTimer=setTimeout(run,Math.max(20,parseInt($('llmSpeed').value)||80));};run();}
-  function pauseLLM(){S.llmRunning=false;if(S.llmTimer)clearTimeout(S.llmTimer);S.llmTimer=null;A.UI.setLive(false);}
+  function startLLM(){if(S.llmRunning)return;S.llmRunning=true;if($('runState'))$('runState').textContent='Realtime';A.UI.setLive(true,'Transformer live · avvio…');const run=async()=>{if(!S.llmRunning)return;const result=await trainLLM(1,{realtime:true});if(!result){pauseLLM();return;}S.llmTimer=setTimeout(run,Math.max(20,parseInt($('llmSpeed').value)||80));};run();}
+  function pauseLLM(){S.llmRunning=false;if(S.llmTimer)clearTimeout(S.llmTimer);S.llmTimer=null;A.UI.setLive(false);if(S.mode==='advanced'&&$('runState'))$('runState').textContent='Pausa';}
 
 
   async function generateLLM(){
@@ -253,10 +306,12 @@ window.AIML = window.AIML || {};
     $('torchStep').textContent=st.step; $('torchParams').textContent=st.params.total.toLocaleString('it-IT'); $('torchDeviceMetric').textContent=st.device;
     $('torchLoss').textContent=fmt(st.last?.loss,7); $('torchGrad').textContent=fmt(st.gradients?.l2,5); $('torchWeight').textContent=fmt(st.weights?.l2,5);
     $('torchActivationStats').innerHTML=Object.entries(st.activations||{}).slice(0,18).map(([name,v])=>`<div class="rounded-xl border border-slate-800 p-3"><div class="font-mono text-xs text-blue-300">${esc(name)}</div><div class="text-xs text-slate-500 mt-1">μ=${fmt(v.mean,4)} · σ=${fmt(v.std,4)} · zero=${fmt(100*v.zero_fraction,1)}%</div></div>`).join('') || '<div class="text-slate-500">Esegui un training step per raccogliere le activation.</div>';
+    renderAdvancedTopMetrics(st, S.mlpRunning ? 'Realtime' : 'Pronto');
   }
 
   function renderLLMState(st){
     $('llmStepMetric').textContent=st.step;$('llmParams').textContent=st.params.total.toLocaleString('it-IT');$('llmLoss').textContent=fmt(st.last?.loss,5);$('llmPpl').textContent=fmt(st.last?.perplexity,2);$('llmTokSec').textContent=fmt(st.last?.tokens_per_second,0);$('llmDeviceMetric').textContent=st.device;
+    renderAdvancedTopMetrics(st, S.llmRunning ? 'Realtime' : 'Pronto');
   }
 
   function renderXRay(st){
@@ -264,6 +319,13 @@ window.AIML = window.AIML || {};
     $('torchModuleTree').innerHTML=(st.modules||[]).map(m=>`<div class="flex justify-between gap-3 border-b border-slate-800/60 py-2"><div><span class="font-mono text-blue-300">${esc(m.name)}</span><span class="text-slate-600 ml-2">${esc(m.type)}</span></div><span class="font-mono text-slate-400">${Number(m.direct_params).toLocaleString('it-IT')}</span></div>`).join('');
     $('torchParamRows').innerHTML=(st.parameter_snapshot||[]).map(p=>`<tr><td class="font-mono text-slate-300">${esc(p.name)}</td><td class="font-mono text-slate-500">${esc(JSON.stringify(p.shape))}</td><td class="font-mono">${fmt(p.mean,5)}</td><td class="font-mono">${fmt(p.std,5)}</td><td class="font-mono text-purple-300">${fmt(p.grad_max_abs,5)}</td><td class="font-mono text-slate-500">${Number(p.numel).toLocaleString('it-IT')}</td></tr>`).join('');
     $('torchXraySummary').textContent=`${st.kind} · ${st.params.total.toLocaleString('it-IT')} parametri · device ${st.device} · autograd PyTorch reale`;
+    renderAdvancedTopMetrics(st, (S.mlpRunning || S.llmRunning) ? 'Realtime' : 'Pronto');
+    if (st.kind === 'mlp') {
+      if ($('torchAttentionTitle')) $('torchAttentionTitle').textContent = 'Attention';
+      if ($('torchAttention')) $('torchAttention').innerHTML = '<div class="text-slate-500">Non applicabile: un MLP non usa self-attention. Questa area si attiverà quando ispezionerai un Transformer.</div>';
+    } else {
+      if ($('torchAttentionTitle')) $('torchAttentionTitle').textContent = 'Attention Head 0 · ultimo block';
+    }
   }
 
   function renderAttention(st){
